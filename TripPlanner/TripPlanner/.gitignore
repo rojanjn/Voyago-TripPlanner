@@ -15,7 +15,7 @@ out/
 *.DotSettings.user
 
 # ASP.NET / .NET Core
-appsettings.Development.json
+# appsettings.Development.json
 
 # Publish / deployment
 *.Publish.xml
