@@ -51,3 +51,15 @@ node_modules/
 
 # Others
 *.DS_Store
+
+bin/
+obj/
+.idea/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.DS_Store
+
+
+wwwroot/logs/*.txt
+/TripPlanner/TripPlanner/appsettings.json
