@@ -135,8 +135,8 @@ namespace TripPlanner.Controllers
                 try
                 {
                     // TODO: Update the itinerary
-                    // _context.Update(itinerary);
-                    // await _context.SaveChangesAsync();
+                    _context.Update(itinerary);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
