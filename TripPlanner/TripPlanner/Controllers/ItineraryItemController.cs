@@ -9,6 +9,7 @@ namespace TripPlanner.Controllers;
 
 [Authorize]
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("itineraries/{itineraryId:int}/items")]
 public class ItineraryItemController : ControllerBase
 {
@@ -32,23 +33,33 @@ public class ItineraryItemController : ControllerBase
     {
         return _userManager.GetUserId(User);
     }
-    
-    // Itinerary Ownership Check
     /*
-    // admin, antiforgery
+    // Itinerary Ownership Check
     private async Task<Itinerary?> GetOwnedItineraryAsync(int itineraryId)
     {
+        // Fetch the itinerary ID
+        var itinerary = await _context.Itineraries
+            .FirstOrDefaultAsync(i => i.Id == itineraryId);
+
+        if (itinerary == null)
+            return null;
+
+        // Full permission for admin
+        if (User.IsInRole("Admin"))
+            return itinerary;
+
+        // Get user's own itineraries
         var userId = GetCurrentUserId();
-            
-        return await _context.Itineraries
-            .FirstOrDefaultAsync(i =>
-                i.Id == itineraryId &&
-                i.UserId == userId);
+        if (itinerary.UserId == userId)
+            return itinerary;
+
+        return null;
     }
             
     
     // Create Item (POST)
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateItem(int itineraryId,
         CreateItineraryItemDto dto)
     {
@@ -107,6 +118,7 @@ public class ItineraryItemController : ControllerBase
     
     // Update Item (PUT)
     [HttpPut("{itemId:int}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateItem(
         int itineraryId,
         int itemId,
@@ -135,6 +147,7 @@ public class ItineraryItemController : ControllerBase
     
     // Delete Item (DELETE)
     [HttpDelete("{itemId:int}")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteItem(
         int itineraryId,
         int itemId)

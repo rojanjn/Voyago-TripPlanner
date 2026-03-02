@@ -15,9 +15,10 @@ namespace TripPlanner.Controllers
         {
             _context = context;
         }
-
+/*
         // GET: Itinerary/Index
         [HttpGet]
+
         public async Task<IActionResult> Index()
         {
             if (User.IsInRole("Admin"))
@@ -192,5 +193,6 @@ namespace TripPlanner.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        */
     }
 }
