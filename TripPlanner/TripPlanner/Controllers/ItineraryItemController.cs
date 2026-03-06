@@ -10,7 +10,6 @@ namespace TripPlanner.Controllers;
 
 [Authorize]
 [ApiController]
-[Authorize(Roles = "Admin")]
 [Route("itineraries/{itineraryId:int}/items")]
 public class ItineraryItemController : ControllerBase
 {
@@ -30,10 +29,7 @@ public class ItineraryItemController : ControllerBase
     }
     
     // Get Current User Id
-    private string GetCurrentUserId()
-    {
-        return _userManager.GetUserId(User);
-    }
+    private string GetCurrentUserId() => _userManager.GetUserId(User);
     
     // Itinerary Ownership Check
     private async Task<Itinerary?> GetOwnedItineraryAsync(int itineraryId)
@@ -42,12 +38,10 @@ public class ItineraryItemController : ControllerBase
         var itinerary = await _context.Itineraries
             .FirstOrDefaultAsync(i => i.Id == itineraryId);
 
-        if (itinerary == null)
-            return null;
+        if (itinerary == null) return null;
 
         // Full permission for admin
-        if (User.IsInRole("Admin"))
-            return itinerary;
+        if (User.IsInRole("Admin")) return itinerary;
 
         // Get user's own itineraries
         var userId = GetCurrentUserId();
@@ -56,21 +50,53 @@ public class ItineraryItemController : ControllerBase
 
         return null;
     }
-            
     
-    // Create Item (POST)
+    
+    
+    // Read Items (GET)
+    [HttpGet]
+    public async Task<IActionResult> GetItems(int itineraryId)
+    {
+        var itinerary = await GetOwnedItineraryAsync(itineraryId);
+        if (itinerary == null) return NotFound();
+
+        var items = await _context.ItineraryItems
+            .Include(i => i.Location)
+            .Where(i => i.ItineraryId == itineraryId)
+            .OrderBy(i => i.StopOrder)
+            .ToListAsync();
+
+        var itemsDto = items.Select(i => new ItineraryItemDto
+        {
+            Id = i.Id,
+            LocationId = i.LocationId,
+            LocationName = i.Location.Name,
+            StartDateTime = i.StartDateTime,
+            EndDateTime = i.EndDateTime,
+            StopOrder = i.StopOrder,
+            Note = i.Note
+        });
+
+        return Ok(itemsDto);
+    }
+    
+    
+    
+    // Create Item (POST) /itineraries/{itineraryId}/items
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateItem(int itineraryId,
         CreateItineraryItemDto dto)
     {
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null)
-            return NotFound();
+        if (itinerary == null) return NotFound();
+        
+        var locationExists = await _context.Locations.AnyAsync(l => l.Id == dto.LocationId);
+        if (!locationExists) return BadRequest("Location not found.");
 
         var item = new ItineraryItem
         {
             ItineraryId = itineraryId,
+            LocationId = dto.LocationId,
             StartDateTime = dto.StartDateTime,
             EndDateTime = dto.EndDateTime,
             StopOrder = dto.StopOrder,
@@ -83,6 +109,8 @@ public class ItineraryItemController : ControllerBase
         var resultDto = new ItineraryItemDto
         {
             Id = item.Id,
+            LocationId = item.LocationId,
+            LocationName = (await _context.Locations.FindAsync(item.LocationId))!.Name,
             StartDateTime = item.StartDateTime,
             EndDateTime = item.EndDateTime,
             StopOrder = item.StopOrder,
@@ -92,51 +120,29 @@ public class ItineraryItemController : ControllerBase
         return Ok(resultDto);
     }
     
-    // Read Items (GET)
-    [HttpGet]
-    public async Task<IActionResult> GetItems(int itineraryId)
-    {
-        var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null)
-            return NotFound();
-
-        var items = await _context.ItineraryItems
-            .Where(i => i.ItineraryId == itineraryId)
-            .OrderBy(i => i.StopOrder)
-            .ToListAsync();
-
-        var itemsDto = items.Select(i => new ItineraryItemDto
-        {
-            Id = i.Id,
-            StartDateTime = i.StartDateTime,
-            EndDateTime = i.EndDateTime,
-            StopOrder = i.StopOrder,
-            Note = i.Note
-        }).ToList();
-
-        return Ok(itemsDto);
-    }
+    
     
     // Update Item (PUT)
     [HttpPut("{itemId:int}")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> UpdateItem(
         int itineraryId,
         int itemId,
         UpdateItineraryItemDto dto)
     {
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null)
-            return NotFound();
+        if (itinerary == null) return NotFound();
 
         var item = await _context.ItineraryItems
             .FirstOrDefaultAsync(i =>
                 i.Id == itemId &&
                 i.ItineraryId == itineraryId);
 
-        if (item == null)
-            return NotFound();
+        if (item == null) return NotFound();
 
+        var locationExists = await _context.Locations.AnyAsync(l => l.Id == dto.LocationId);
+        if (!locationExists) return BadRequest("Location not found.");
+
+        item.LocationId = dto.LocationId;
         item.StartDateTime = dto.StartDateTime;
         item.EndDateTime = dto.EndDateTime;
         item.StopOrder = dto.StopOrder;
@@ -146,16 +152,14 @@ public class ItineraryItemController : ControllerBase
         return NoContent();
     }
     
-    // Delete Item (DELETE)
+    // Delete Item (DELETE) /itineraries/{itineraryId}/items/{itemId}
     [HttpDelete("{itemId:int}")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteItem(
         int itineraryId,
         int itemId)
     {
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null)
-            return NotFound();
+        if (itinerary == null) return NotFound();
 
         var item = await _context.ItineraryItems
             .FirstOrDefaultAsync(i =>
@@ -167,7 +171,6 @@ public class ItineraryItemController : ControllerBase
 
         _context.ItineraryItems.Remove(item);
         await _context.SaveChangesAsync();
-
         return NoContent();
     }
     
