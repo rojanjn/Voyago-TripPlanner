@@ -18,7 +18,6 @@ namespace TripPlanner.Controllers
 
         // GET: Itinerary/Index
         [HttpGet]
-
         public async Task<IActionResult> Index()
         {
             if (User.IsInRole("Admin"))
