@@ -10,10 +10,10 @@ public class ItineraryItem
     // PK
     public int ItineraryItemId { get; set; }
     
-    // FK From Itinerary ↓
+    // FK
     [Required]
     public int ItineraryId { get; set; }
-    
+    public int LocationId { get; set; }
     
     [Required]
     public DateTime StartDateTime { get; set; }
@@ -25,7 +25,8 @@ public class ItineraryItem
     
     public string? Note { get; set; }
     
+    // navigation property back to the user
     public Itinerary Itinerary { get; set; }
-    public List<Location> Locations { get; set; } = new();
+    public Location Location { get; set; }
 
 }
