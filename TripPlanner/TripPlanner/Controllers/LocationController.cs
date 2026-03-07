@@ -62,7 +62,7 @@ public class LocationController
             return Ok(dto);
         }
         
-        
+        /*
         // POST /locations
         [HttpPost]
         public async Task<IActionResult> Create(CreateLocationDto dto)
@@ -91,7 +91,7 @@ public class LocationController
                     PlaceId = location.PlaceId
             });
         }
-        
+        */
         // PUT /locations/{id}
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, UpdateLocationDto dto)
