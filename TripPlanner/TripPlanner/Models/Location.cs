@@ -8,11 +8,7 @@ namespace TripPlanner.Models;
 public class Location
 {
     // PK
-    public int LocationId { get; set; }
-    
-    // FK From ItineraryItem
-    [Required]
-    public int ItineraryItemId { get; set; }
+    public int Id { get; set; }
     
     [Required]
     public string Name { get; set; } = null!;
@@ -23,13 +19,16 @@ public class Location
     [Required]
     [Column(TypeName = "decimal(9,6)")]
     public decimal Latitude { get; set; }
+    
     [Required]
     [Column(TypeName = "decimal(9,6)")]
     public decimal Longitude { get; set; }
+    
     public string? Description { get; set; }
     
     public string? PlaceId { get; set; }
     
-    public ItineraryItem ItineraryItem { get; set; } = null!;
+    // navigation property
+    public ICollection<ItineraryItem> ItineraryItems { get; set; } = new List<ItineraryItem>();
    
 }

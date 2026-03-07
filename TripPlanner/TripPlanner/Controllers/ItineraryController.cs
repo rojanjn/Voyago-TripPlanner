@@ -199,5 +199,6 @@ namespace TripPlanner.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        
     }
 }

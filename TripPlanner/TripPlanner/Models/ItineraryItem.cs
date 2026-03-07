@@ -8,24 +8,26 @@ namespace TripPlanner.Models;
 public class ItineraryItem
 {
     // PK
-    public int ItineraryItemId { get; set; }
+    public int Id { get; set; }
     
-    // FK From Itinerary ↓
+    // FK
     [Required]
     public int ItineraryId { get; set; }
-    
+    [Required]
+    public int LocationId { get; set; }
     
     [Required]
     public DateTime StartDateTime { get; set; }
     
-    public DateTime? EndDateTime { get; set; }
+    public DateTime EndDateTime { get; set; }
     
     [Required]
     public int StopOrder { get; set; }
     
     public string? Note { get; set; }
     
-    public Itinerary Itinerary { get; set; }
-    public List<Location> Locations { get; set; } = new();
+    // navigation property back to the user
+    public Itinerary Itinerary { get; set; } = null!;
+    public Location Location { get; set; } = null!;
 
 }

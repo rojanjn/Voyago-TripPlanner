@@ -6,6 +6,7 @@ namespace TripPlanner.Data;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     public DbSet<Country> Countries => Set<Country>();
     public DbSet<Itinerary> Itineraries => Set<Itinerary>();
@@ -45,34 +46,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(I => I.ItineraryId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Location>()
-            .HasOne(i => i.ItineraryItem)
-            .WithMany(l => l.Locations)
-            .HasForeignKey(I => I.ItineraryItemId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ItineraryItem>()
+            .HasOne(i => i.Location)
+            .WithMany(l => l.ItineraryItems)
+            .HasForeignKey(i => i.LocationId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Phrase>()
             .HasOne(p => p.Country)
             .WithMany(c => c.Phrases)
             .HasForeignKey(p => p.CountryId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        // === ItineraryAttraction join table - composite PK ===
-        modelBuilder.Entity<ItineraryAttraction>()
-            .HasKey(ia => new { ia.ItineraryId, ia.AttractionId });
-
-        modelBuilder.Entity<ItineraryAttraction>()
-            .HasOne(ia => ia.Itinerary)
-            .WithMany(i => i.ItineraryAttractions)
-            .HasForeignKey(ia => ia.ItineraryId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ItineraryAttraction>()
-            .HasOne(ia => ia.Attraction)
-            .WithMany(a => a.ItineraryAttractions)
-            .HasForeignKey(ia => ia.AttractionId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // TODO: add attraction field mappings/constaints here once fields are defined in the Attraction model
     }
+
 }
