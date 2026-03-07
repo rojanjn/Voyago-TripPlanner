@@ -1,4 +1,7 @@
 ﻿using System.Text.Json;
+using TripPlanner.Google.PlaceSearch;
+using TripPlanner.Google.PlaceDetails;
+using TripPlanner.Google.PlaceSearch;
 
 namespace TripPlanner.Services;
 
@@ -15,7 +18,11 @@ public class GooglePlacesService
 
     public async Task<List<GooglePlaceResult>> SearchGooglePlaces(string query)
     {
-        var apikey = _config["GoogleMaps:GoogleApiKey"];
+        var apikey = _config["GoogleMaps:ApiKey"]
+            ?? throw new Exception("GoogleMaps ApiKey not configured");
+                     
+        
+        var encodedQuery = Uri.EscapeDataString(query);
 
         var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query={{query}}&key={{apiKey}}";
         
@@ -31,32 +38,33 @@ public class GooglePlacesService
             PropertyNameCaseInsensitive = true
         };
         
-        var result = JsonSerializer.Deserialize<GooglePlaceResponse>(json, options);
+        var result = JsonSerializer.Deserialize<GooglePlacesResponse>(json, options);
 
         return result?.Results ?? new List<GooglePlaceResult>();
     }
+    
+    public async Task<GooglePlaceDetails?> GetPlaceDetailsAsync(string placeId)
+    {
+        var apiKey = _config["GoogleMaps:ApiKey"];
+    
+        var url =
+            $"https://maps.googleapis.com/maps/api/place/details/json?place_id={placeId}&key={apiKey}";
+
+        var response = await _httpClient.GetAsync(url);
+
+        if (!response.IsSuccessStatusCode) return null;
+
+        var json = await response.Content.ReadAsStringAsync();
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+         
+        var result = JsonSerializer.Deserialize<GooglePlaceDetailsResponse>(json, options);
+        
+        return result?.Result;
+    }
 }
 
-public class GooglePlaceResponse
-{
-    public List<GooglePlaceResult> Results { get; set; } = new();
-}
 
-public class GooglePlaceResult
-{
-    public string Name { get; set; } = "";
-    public string Formatted_Address { get; set; } = "";
-    public string Place_Id { get; set; } = "";
-    public Geometry Geometry { get; set; } = new();
-}
-
-public class Geometry
-{
-    public Location Location { get; set; } = new();
-}
-
-public class Location
-{
-    public double Lat { get; set; }
-    public double Lng { get; set; }
-} 

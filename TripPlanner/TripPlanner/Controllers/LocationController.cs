@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TripPlanner.Models;
 using TripPlanner.Data;
 using TripPlanner.Dtos.Location;
+using TripPlanner.Services;
 
 namespace TripPlanner.Controllers;
 
@@ -13,10 +14,12 @@ namespace TripPlanner.Controllers;
 public class LocationController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
+    private readonly GooglePlacesService _googleService;
 
-    public LocationController(ApplicationDbContext context)
+    public LocationController(ApplicationDbContext context, GooglePlacesService googleService)
     {
         _context = context;
+        _googleService = googleService;
     }
         
         
@@ -64,7 +67,7 @@ public class LocationController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateLocationDto dto)
     {
-        var location = new Location
+        var location = new Models.Location
         {
             Name = dto.Name,
             Address = dto.Address,
@@ -126,7 +129,23 @@ public class LocationController : ControllerBase
         return NoContent();
     }
         
-        
+    // GET /locations/search?query=toronto
+    [HttpGet("search")]
+    public async Task<IActionResult> Search(string query)
+    {
+        var places = await _googleService.SearchGooglePlaces(query);
+
+        var results = places.Select(p => new
+        {
+            name = p.Name,
+            address = p.Formatted_Address,
+            latitude = p.Geometry.Location.Lat,
+            longitude = p.Geometry.Location.Lng,
+            placeId = p.Place_Id
+        });
+
+        return Ok(results);
+    }
         
         
         
