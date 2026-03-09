@@ -16,22 +16,26 @@
     
     <div class="edit-form">
         <label asp-for="Title" class="control-label"></label>
-        <input asp-for="Title" class="form-control"/>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
         <label asp-for="Description" class="control-label"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
         <label asp-for="StartDate" class="control-label"></label>
-        <input asp-for="StartDate" class="form-control"/>
+        <input asp-for="StartDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
         <label asp-for="EndDate" class="control-label"></label>
-        <input asp-for="EndDate" class="form-control"/>
+        <input asp-for="EndDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
     
     <div class="edit-form">
