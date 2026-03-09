@@ -15,23 +15,27 @@
     @Html.HiddenFor(model => model.Id)
     
     <div class="edit-form">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" />
+        <label asp-for="Title" class="control-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description"></textarea>
+        <label asp-for="Description" class="control-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
-        <label asp-for="StartDate"></label>
-        <input asp-for="StartDate" />
+        <label asp-for="StartDate" class="control-label"></label>
+        <input asp-for="StartDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span> 
     </div>
     
     <div class="edit-form">
-        <label asp-for="EndDate"></label>
-        <input asp-for="EndDate" />
+        <label asp-for="EndDate" class="control-label"></label>
+        <input asp-for="EndDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
     
     <div class="edit-form">

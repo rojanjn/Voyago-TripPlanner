@@ -12,14 +12,36 @@
 <a asp-action="Create" class="btn btn-primary">Create New Itinerary</a>
 @if (Model.Any())
 {
-    <!---Foreach loop is used to display the itineraries--->
-    @foreach (var item in Model)
-    {
-        <div>
-            <h3>@item.Title</h3>
-            <p>@item.Description</p>
-        </div>
-    }
+    <table class="table"> 
+        <thead> 
+            <tr> 
+                <th>ID</th> 
+                <th>Title</th> 
+                <th>Start Date</th> 
+                <th>End Date</th>
+            </tr> 
+        </thead> 
+            
+        <tbody>
+
+            <!---Foreach loop is used to display the itineraries--->
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@Html.DisplayFor(modelItem => item.Title, "Title")</td>
+                    <td>@Html.DisplayFor(modelItem => item.StartDate, 
+                            "Start Date")</td>
+                    <td>@Html.DisplayFor(modelItem => item.EndDate, 
+                            "End Date")</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody> 
+    </table> 
 }
 else
 {
