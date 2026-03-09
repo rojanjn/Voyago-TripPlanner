@@ -71,6 +71,10 @@ namespace TripPlanner.Controllers
             {
                 // Assign the current user as the owner before saving
                 itinerary.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                itinerary.StartDate = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc);
+                itinerary.EndDate = DateTime.SpecifyKind(itinerary.EndDate, DateTimeKind.Utc);
+
                 _context.Add(itinerary);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -132,6 +136,9 @@ namespace TripPlanner.Controllers
                     existing.StartDate = itinerary.StartDate;
                     existing.EndDate = itinerary.EndDate;
 
+                    existing.StartDate = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc);
+                    existing.EndDate = DateTime.SpecifyKind(itinerary.EndDate, DateTimeKind.Utc);
+
                     _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
@@ -192,5 +199,6 @@ namespace TripPlanner.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        
     }
 }
