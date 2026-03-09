@@ -67,7 +67,7 @@ public class LocationController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateLocationDto dto)
     {
-        var location = new Models.Location
+        var location = new Location
         {
             Name = dto.Name,
             Address = dto.Address,
@@ -133,8 +133,11 @@ public class LocationController : ControllerBase
     [HttpGet("search")]
     public async Task<IActionResult> Search(string query)
     {
+        // A service that wraps Google Places API.
+        // SearchGooglePlaces(query) sends the search request and returns a list of place results.
         var places = await _googleService.SearchGooglePlaces(query);
 
+        // The Select projects each place into an anonymous object that contains only the fields you want the client to see.
         var results = places.Select(p => new
         {
             name = p.Name,

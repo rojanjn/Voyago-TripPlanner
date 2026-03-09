@@ -47,8 +47,7 @@ public class ItineraryItemController : ControllerBase
 
         // Get user's own itineraries
         var userId = GetCurrentUserId();
-        if (itinerary.UserId == userId)
-            return itinerary;
+        if (itinerary.UserId == userId) return itinerary;
 
         return null;
     }
