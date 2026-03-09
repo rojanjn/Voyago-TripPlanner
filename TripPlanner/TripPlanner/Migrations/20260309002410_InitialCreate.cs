@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace TripPlanner.Migrations
 {
     /// <inheritdoc />
@@ -31,10 +33,6 @@ namespace TripPlanner.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    ProfilePicture = table.Column<byte[]>(type: "bytea", nullable: true),
-                    ProfilePictureMimeType = table.Column<string>(type: "text", nullable: true),
-                    LastPhoneNumberChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    PhoneNumberChangeCount = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -67,6 +65,24 @@ namespace TripPlanner.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_countries", x => x.CountryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "locations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
+                    Latitude = table.Column<decimal>(type: "numeric(9,6)", nullable: false),
+                    Longitude = table.Column<decimal>(type: "numeric(9,6)", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    PlaceId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_locations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -230,48 +246,61 @@ namespace TripPlanner.Migrations
                 name: "itinerary_items",
                 columns: table => new
                 {
-                    ItineraryItemId = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ItineraryId = table.Column<int>(type: "integer", nullable: false),
+                    LocationId = table.Column<int>(type: "integer", nullable: false),
                     StartDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    EndDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StopOrder = table.Column<int>(type: "integer", nullable: false),
                     Note = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_itinerary_items", x => x.ItineraryItemId);
+                    table.PrimaryKey("PK_itinerary_items", x => x.Id);
                     table.ForeignKey(
                         name: "FK_itinerary_items_itineraries_ItineraryId",
                         column: x => x.ItineraryId,
                         principalTable: "itineraries",
                         principalColumn: "itinerary_id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_itinerary_items_locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "locations",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "itineraries",
+                columns: new[] { "itinerary_id", "CountryId", "Description", "EndDate", "StartDate", "Title", "UserId" },
+                values: new object[,]
                 {
-                    LocationId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ItineraryItemId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    Latitude = table.Column<decimal>(type: "numeric(9,6)", nullable: false),
-                    Longitude = table.Column<decimal>(type: "numeric(9,6)", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    PlaceId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
+                    { 1, null, null, new DateTime(2026, 3, 14, 9, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc), "First Trip", null },
+                    { 2, null, null, new DateTime(2026, 6, 14, 9, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc), "Second Trip", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "locations",
+                columns: new[] { "Id", "Address", "Description", "Latitude", "Longitude", "Name", "PlaceId" },
+                values: new object[,]
                 {
-                    table.PrimaryKey("PK_locations", x => x.LocationId);
-                    table.ForeignKey(
-                        name: "FK_locations_itinerary_items_ItineraryItemId",
-                        column: x => x.ItineraryItemId,
-                        principalTable: "itinerary_items",
-                        principalColumn: "ItineraryItemId",
-                        onDelete: ReferentialAction.Cascade);
+                    { 1, "N/A For Test", null, 45.504537m, -73.556094m, "Notre-Dame Basilica", null },
+                    { 2, "Isfahan, Isfahan Province, Iran", null, 32.65745m, 51.677778m, "Naqsh-e Jahan Square", null },
+                    { 3, "Yuchi Township, Nantou County, Taiwan", null, 23.866667m, 120.916667m, "Sun Moon Lake", null },
+                    { 4, "Tuojiang Town, Fenghuang County, Xiangxi Tujia and Miao Autonomous Prefecture of Hunan Province", null, 27.952822m, 109.600989m, "Fenghuang Ancient City", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "itinerary_items",
+                columns: new[] { "Id", "EndDateTime", "ItineraryId", "LocationId", "Note", "StartDateTime", "StopOrder" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2026, 2, 15, 9, 0, 0, 0, DateTimeKind.Utc), 1, 1, null, new DateTime(2026, 1, 16, 9, 0, 0, 0, DateTimeKind.Utc), 1 },
+                    { 2, new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc), 1, 2, null, new DateTime(2026, 2, 16, 9, 0, 0, 0, DateTimeKind.Utc), 2 },
+                    { 3, new DateTime(2026, 4, 15, 9, 0, 0, 0, DateTimeKind.Utc), 2, 3, null, new DateTime(2026, 3, 16, 9, 0, 0, 0, DateTimeKind.Utc), 3 },
+                    { 4, new DateTime(2026, 5, 15, 9, 0, 0, 0, DateTimeKind.Utc), 2, 4, null, new DateTime(2026, 4, 16, 9, 0, 0, 0, DateTimeKind.Utc), 4 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -327,9 +356,9 @@ namespace TripPlanner.Migrations
                 column: "ItineraryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_locations_ItineraryItemId",
-                table: "locations",
-                column: "ItineraryItemId");
+                name: "IX_itinerary_items_LocationId",
+                table: "itinerary_items",
+                column: "LocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_phrases_CountryId",
@@ -356,7 +385,7 @@ namespace TripPlanner.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "locations");
+                name: "itinerary_items");
 
             migrationBuilder.DropTable(
                 name: "phrases");
@@ -365,10 +394,10 @@ namespace TripPlanner.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "itinerary_items");
+                name: "itineraries");
 
             migrationBuilder.DropTable(
-                name: "itineraries");
+                name: "locations");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
