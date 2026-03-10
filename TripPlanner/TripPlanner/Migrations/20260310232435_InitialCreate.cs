@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace TripPlanner.Migrations
 {
     /// <inheritdoc />
-    public partial class SupplementSeedData : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -323,8 +323,8 @@ namespace TripPlanner.Migrations
                     { 2, "Merci", 1, "Thank you" },
                     { 3, "Où sont les toilettes ?", 1, "Where is the restroom?" },
                     { 4, "Combien ça coûte ?", 1, "How much is it?" },
-                    { 5, "سلام", 2, "Hello" },
-                    { 6, "متشکرم", 2, "Thank you" },
+                    { 5, "درود", 2, "Hello" },
+                    { 6, "ممنونم", 2, "Thank you" },
                     { 7, "سرویس بهداشتی کجاست؟", 2, "Where is the restroom?" },
                     { 8, "این چقدر است؟", 2, "How much is it?" },
                     { 9, "你好", 3, "Hello" },

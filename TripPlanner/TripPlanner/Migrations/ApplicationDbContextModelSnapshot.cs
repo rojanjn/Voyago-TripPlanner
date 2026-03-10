@@ -532,14 +532,14 @@ namespace TripPlanner.Migrations
                         new
                         {
                             PhraseId = 5,
-                            Content = "سلام",
+                            Content = "درود",
                             CountryId = 2,
                             Translation = "Hello"
                         },
                         new
                         {
                             PhraseId = 6,
-                            Content = "متشکرم",
+                            Content = "ممنونم",
                             CountryId = 2,
                             Translation = "Thank you"
                         },
