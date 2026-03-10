@@ -1,14 +1,65 @@
 ﻿@{
-	ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Admin Dashboard</h2>
+<script>document.body.classList.add('admin-page');</script>
 
-<p>Welcome to the Admin Dashboard! Here you can manage users, view reports, and configure settings.</p>
+<div class="admin-dashboard">
 
-<!-- TODO: Assign each link to a page (if needed) -->
-<ul>
-	<li>Manage Users</li>
-	<li>View System Statistics</li>
-	<li>Manage Attractions</li>
-</ul>
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p class="admin-subtitle">Welcome back. Here's what's happening with Voyago.</p>
+        </div>
+        <div class="admin-badge">Admin</div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="admin-stats">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">👥</div>
+            <div class="admin-stat-label">Total Users</div>
+            <div class="admin-stat-value">—</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">🗺️</div>
+            <div class="admin-stat-label">Itineraries</div>
+            <div class="admin-stat-value">—</div>
+        </div>
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">📍</div>
+            <div class="admin-stat-label">Attractions</div>
+            <div class="admin-stat-value">—</div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="admin-actions">
+        <div class="admin-action-card">
+            <div class="admin-action-icon">👥</div>
+            <div class="admin-action-body">
+                <h5>Manage Users</h5>
+                <p>View, edit, or remove registered user accounts.</p>
+            </div>
+            <span class="admin-action-arrow">→</span>
+        </div>
+        <div class="admin-action-card">
+            <div class="admin-action-icon">📊</div>
+            <div class="admin-action-body">
+                <h5>View System Statistics</h5>
+                <p>Monitor app usage, active sessions, and platform health.</p>
+            </div>
+            <span class="admin-action-arrow">→</span>
+        </div>
+        <div class="admin-action-card">
+            <div class="admin-action-icon">📍</div>
+            <div class="admin-action-body">
+                <h5>Manage Attractions</h5>
+                <p>Add, edit, or remove attractions available to users.</p>
+            </div>
+            <span class="admin-action-arrow">→</span>
+        </div>
+    </div>
+
+</div>
