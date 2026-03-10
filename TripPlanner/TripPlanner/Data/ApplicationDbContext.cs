@@ -209,13 +209,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 new Phrase {
                     PhraseId = 5,
                     CountryId = 2,
-                    Content = "سلام",
+                    Content = "درود",
                     Translation = "Hello"
                 },
                 new Phrase {
                     PhraseId = 6,
                     CountryId = 2,
-                    Content = "متشکرم",
+                    Content = "ممنونم",
                     Translation = "Thank you"
                 },
                 new Phrase {
