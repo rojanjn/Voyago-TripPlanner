@@ -29,6 +29,9 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-area="" asp-controller="Itinerary" asp-action="Index">Itineraries</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Itinerary" asp-action="Create">Plan Your Trip</a>
+                    </li>
 
                     <!-- This nav button is only shown to Admins -->
                     @if (User.IsInRole("Admin"))

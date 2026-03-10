@@ -4,13 +4,10 @@
     ViewData["Title"]="Itineraries";
 }
 
-<!DOCTYPE html>
-
 <h1>Itineraries</h1>
 
-<a asp-action="Create" class="btn btn-primary">Create New Itinerary</a>
 <div class="page-container">
-
+    
     <h2 class="view-title">View</h2>
 
     <div class="tabs">
@@ -24,29 +21,69 @@
         <div class="itinerary-section">
 
             <div id="current" class="tab-content active">
-
                 <div class="itinerary-grid">
+                    @foreach (var item in Model.Where(t => t.EndDate >= DateTime.Now))
+                    {
+                        <div class="itinerary-card" 
+                             onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
 
-                    <div class="itinerary-card">
-                        <div class="card-header">
-                            <span class="title">Title</span>
-                            <span class="country">Country</span>
+                            <div class="card-actions">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="card-btn edit-btn"
+                                   onclick="event.stopPropagation();">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.Id"
+                                   class="card-btn delete-btn"
+                                   onclick="event.stopPropagation();">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                            <div class="card-header">
+                                <span class="title">@item.Title</span>
+                                <span class="country">@item.Country</span>
+                            </div>
+
+                            <div class="dates">
+                                @item.StartDate.ToShortDateString() →
+                                @item.EndDate.ToShortDateString()
+                            </div>
+
+                            <p class="note">
+                                @item.Description
+                            </p>
                         </div>
-
-                        <div class="dates">
-                            2024-05-05 → 2025-05-05
-                        </div>
-
-                        <p class="note">
-                            Note
-                        </p>
-                    </div>
+                    }
                 </div>
             </div>
 
             <div id="past" class="tab-content">
                 <div class="itinerary-grid">
-                    <!-- Past itinerary cards -->
+                    @foreach (var item in Model.Where(t => t.EndDate < DateTime.Now))
+                    {
+                        <div class="itinerary-card">
+
+                            <div class="card-header">
+                                <span class="title">@item.Title</span>
+                                <span class="country">@item.Country</span>
+                            </div>
+
+                            <div class="dates">
+                                @item.StartDate.ToShortDateString() →
+                                @item.EndDate.ToShortDateString()
+                            </div>
+
+                            <p class="note">
+                                @item.Description
+                            </p>
+                        </div>
+                    }
                 </div>
             </div>
         </div>

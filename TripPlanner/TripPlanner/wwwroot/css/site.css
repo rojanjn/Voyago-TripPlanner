@@ -36,12 +36,6 @@ body {
   font-weight:600;
 }
 
-body{
-  background:#0d0d0d;
-  color:white;
-  font-family:Arial, Helvetica, sans-serif;
-}
-
 .page-container{
   width:90%;
   margin:auto;
@@ -62,14 +56,14 @@ body{
 }
 
 .tab{
-  background:#111;
-  border:1px solid white;
+  background:#eeeeee;
+  border:1px solid black;
   padding:6px 20px;
   cursor:pointer;
 }
 
 .tab.active{
-  background:#222;
+  background:#dddddd;
 }
 
 /* Itinerary cards */
@@ -81,15 +75,15 @@ body{
 }
 
 .itinerary-card{
-  border:1px solid white;
+  border:1px solid black;
   padding:15px;
   min-height:140px;
-  background:#0a0a0a;
+  background:#f5f5f5;
   transition:0.2s;
 }
 
 .itinerary-card:hover{
-  background:#151515;
+  background:#eaeaea;
   transform:scale(1.02);
 }
 
@@ -111,12 +105,12 @@ body{
 /* Right panel */
 
 .nav-panel{
-  border:1px solid white;
+  border:1px solid black;
   padding:15px;
 }
 
 .nav-content{
-  border:1px solid white;
+  border:1px solid black;
   padding:30px;
   text-align:center;
   margin-top:10px;
@@ -130,4 +124,77 @@ body{
 
 .tab-content.active{
   display:block;
+}
+
+.view-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.trip-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: white;
+}
+
+.content-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem; height: 400px;
+}
+
+.map-panel, .items-panel {
+  border: 1px solid #333;
+  padding: 1rem;
+}
+
+.btn-nav {
+  float: right;
+}
+
+.itinerary-card{
+  position:relative;
+  border:1px solid black;
+  padding:15px;
+  background:#f5f5f5;
+  cursor:pointer;
+}
+
+/* Button container */
+
+.card-actions{
+  position:absolute;
+  top:8px;
+  right:8px;
+  display:flex;
+  gap:6px;
+}
+
+/* Buttons */
+
+.card-btn{
+  border:1px solid black;
+  padding:3px 8px;
+  font-size:12px;
+  text-decoration:none;
+  color:black;
+  background:#eeeeee;
+}
+
+.card-btn:hover{
+  background:#dddddd;
+}
+
+.edit-btn{
+}
+
+.delete-btn{
 }

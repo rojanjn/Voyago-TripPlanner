@@ -1,18 +1,57 @@
 @model Itinerary
 
 @{
-    Layout = null;
+    Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+<h2>@Model.Title</h2>
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<div class="form-card">
+
+    <p><strong>Country:</strong> @Model.Country</p>
+
+    <p>
+        <strong>Dates:</strong>
+        @Model.StartDate.ToShortDateString() →
+        @Model.EndDate.ToShortDateString()
+    </p>
+
+    <p><strong>Description:</strong></p>
+
+    <p>@Model.Description</p>
+    
+    <h3>Attractions</h3>
+
+    @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
+    {
+        <div class="itinerary-items">
+
+            @foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
+            {
+                <div class="item-card">
+
+                    <div class="item-header">
+                        <strong>@item.Location.Name</strong>
+                    </div>
+
+                    <div class="item-time">
+                        @item.StartDateTime.ToString("g")
+                        →
+                        @item.EndDateTime.ToString("g")
+                    </div>
+
+                    <p>@item.Note</p>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <p>No attractions added yet.</p>
+    }
+    
+    <a asp-action="Index" class="btn-cancel">Back</a>
+
 </div>
-</body>
-</html>
