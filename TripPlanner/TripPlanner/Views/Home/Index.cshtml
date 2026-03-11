@@ -1,7 +1,127 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<!-- Hero Section -->
+<div class="hero">
+    <div class="hero-inner">
+        <div class="hero-content">
+            <div class="hero-brand">Voyago</div>
+            <h1 class="hero-title">Plan unforgettable<br />trips, your way.</h1>
+            <p class="hero-subtitle">Build detailed itineraries, discover attractions, and travel smarter with Voyago.</p>
+            <a asp-controller="Itinerary" asp-action="Index" class="hero-cta">Start Planning →</a>
+        </div>
+        <div class="hero-image-wrap">
+            <img src="~/img/banner.png" alt="Travel" class="hero-img" />
+        </div>
+    </div>
+
+    <!-- Decorative shapes -->
+    <div class="shape shape-ring"></div>
+    <div class="shape shape-dot-1"></div>
+    <div class="shape shape-dot-2"></div>
+    <div class="shape shape-dot-3"></div>
 </div>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">✦ Everything you need to travel better ✦</h2>
+        <p class="section-subtitle">From planning to exploring, Voyago has you covered.</p>
+
+        <!-- Feature 1 -->
+        <div class="feature-row">
+            <div class="feature-row-img">
+                <div class="feature-img-placeholder"><img src="~/img/itineraries.jpg" alt="Tourist Guide Signs" /></div>
+            </div>
+            <div class="feature-row-text">
+                <h3>Build Itineraries</h3>
+                <p>Create detailed day-by-day travel plans with destinations, activities, and personal notes — all in one organized place.</p>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-row reverse">
+            <div class="feature-row-img">
+                <div class="feature-img-placeholder"><img src="~/img/attractions.jpg" alt="Attractions" /></div>
+            </div>
+            <div class="feature-row-text">
+                <h3>Discover Attractions</h3>
+                <p>Browse a curated list of must-see attractions around the world and add them to your itinerary with a single click.</p>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-row">
+            <div class="feature-row-img">
+                <div class="feature-img-placeholder"><img src="~/img/travel.jpg" alt="Travels" /></div>
+            </div>
+            <div class="feature-row-text">
+                <h3>Travel Smarter</h3>
+                <p>Keep all your trip details organized and accessible — wherever your journey takes you.</p>
+            </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-row reverse">
+            <div class="feature-row-img">
+                <div class="feature-img-placeholder"><img src="~/img/globe.jpg" alt="Globe" /></div>
+            </div>
+            <div class="feature-row-text">
+                <h3>Explore Countries</h3>
+                <p>Get country-specific travel info, local phrases, and cultural tips to make the most of every destination you visit.</p>
+            </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-row">
+            <div class="feature-row-img">
+                <div class="feature-img-placeholder"><img src="~/img/lock.jpg" alt="Lock" /></div>
+            </div>
+            <div class="feature-row-text">
+                <h3>Your Trips, Your Privacy</h3>
+                <p>Your itineraries are private to you. Secure accounts ensure only you can see, edit, and manage your travel plans.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="voyago-footer">
+    <div class="container">
+        <div class="footer-grid">
+
+            <!-- Brand -->
+            <div class="footer-brand-col">
+                <div class="footer-logo">Voyago</div>
+                <p class="footer-tagline">Plan unforgettable trips, your way.</p>
+                <p class="footer-course">COMP2154 — Group 17</p>
+            </div>
+
+            <!-- Repo -->
+            <div class="footer-col">
+                <h5>Project</h5>
+                <ul>
+                    <li><a href="https://github.com/spook0328/Comp2154_Voyago" target="_blank">GitHub Repository</a></li>
+                </ul>
+            </div>
+
+            <!-- Team -->
+            <div class="footer-col">
+                <h5>Team</h5>
+                <ul>
+                    <li><a href="https://github.com/spook0328" target="_blank">Jui Hsin Wong</a></li>
+                    <li><a href="https://github.com/rojanjn" target="_blank">Rojan Jafarnezhad</a></li>
+                    <li><a href="https://github.com/Mason0167" target="_blank">Cheng-Yeh Tsai</a></li>
+                    <li><a href="https://github.com/MangoYuuu" target="_blank">Yuqing Lin</a></li>
+                    <li><a href="https://github.com/dreamshrine" target="_blank">Shayne Atkins</a></li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Voyago — COMP2154 Group 17. Built for educational purposes.</p>
+        </div>
+    </div>
+</footer>
