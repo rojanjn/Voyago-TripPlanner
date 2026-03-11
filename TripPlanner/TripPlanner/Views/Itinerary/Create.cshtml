@@ -1,36 +1,25 @@
-@model Itinerary
+@model TripPlanner.Models.Itinerary
 
 @{
-    ViewData["Title"] = "Create Itinerary";
+    Layout = "_Layout";
 }
 
 <!DOCTYPE html>
 
-<h2>Create Itinerary</h2>
+<h2 class="page-title">Plan Your Trip</h2>
 
 <form asp-action="Create" method="post">
-    <div class="create-form">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" />
-    </div>
-    
-    <div class="create-form">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description"></textarea>
-    </div>
-    
-    <div class="create-form">
-        <label asp-for="StartDate"></label>
-        <input asp-for="StartDate" />
-    </div>
-    
-    <div class="create-form">
-        <label asp-for="EndDate"></label>
-        <input asp-for="EndDate" />
-    </div>
-    
-    <div class="button-group">
-        <input type="submit" value="Create" class="btn-create"/>
-        <a asp-action="Index" class="btn-cancel">Cancel</a>
+    <div class="trip-container">
+        <div class="filter-bar">
+            <input asp-for="Title" placeholder="Trip Title" />
+            <input asp-for="StartDate" placeholder="Start Date" />
+            <input asp-for="EndDate" placeholder="End Date" />
+  
+            <input asp-for="Description" placeholder="Budget" />
+        
+            <button type="submit" class="btn-create">Create Itinerary</button>
+            <button class="btn-nav">Nav</button>
+        </div>
+        
     </div>
 </form>

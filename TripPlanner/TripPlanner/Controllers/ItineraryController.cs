@@ -7,6 +7,7 @@ using TripPlanner.Dtos.Itinerary;
 using TripPlanner.Dtos.Location;
 using TripPlanner.Services;
 
+
 namespace TripPlanner.Controllers
 {
     [Authorize]
@@ -48,6 +49,8 @@ namespace TripPlanner.Controllers
             if (id == null) return NotFound();
 
             var itinerary = await _context.Itineraries
+                .Include(m => m.ItineraryItems)
+                .ThenInclude(m => m.Location)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (itinerary == null) return NotFound();
@@ -66,7 +69,7 @@ namespace TripPlanner.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+                return View();
         }
 
         // POST: Itinerary/Create
