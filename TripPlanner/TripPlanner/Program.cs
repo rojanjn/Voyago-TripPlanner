@@ -21,6 +21,7 @@ builder.Services.AddControllersWithViews();
 
 // Add HttpClient service
 builder.Services.AddHttpClient<GooglePlacesService>();
+builder.Services.AddHttpClient<RouteService>();
 
 // Set False for now
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
