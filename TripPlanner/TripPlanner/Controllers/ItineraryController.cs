@@ -4,6 +4,10 @@ using TripPlanner.Models;
 using TripPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using TripPlanner.ViewModels;
+using TripPlanner.Dtos.Itinerary;
+using TripPlanner.Dtos.Location;
+using TripPlanner.Services;
+
 
 namespace TripPlanner.Controllers
 {
@@ -11,10 +15,14 @@ namespace TripPlanner.Controllers
     public class ItineraryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly RouteService _routeService;
 
-        public ItineraryController(ApplicationDbContext context)
+        public ItineraryController(
+            ApplicationDbContext context, 
+            RouteService routeService)
         {
             _context = context;
+            _routeService = routeService;
         }
 
         // GET: Itinerary/Index
@@ -207,5 +215,70 @@ namespace TripPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
         
+        
+        // GET: Itinerary/{id}/DetailsWithItems
+        [HttpGet("{id}/details")]
+        public async Task<IActionResult> GetDetails(int id)
+        {
+            var itinerary = await _context.Itineraries
+                .Include(i => i.ItineraryItems)
+                .ThenInclude(item => item.Location)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (itinerary == null)
+                return NotFound();
+
+            // ownership check
+            if (!User.IsInRole("Admin"))
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                if (itinerary.UserId != userId)
+                    return Forbid();
+            }
+
+            var result = new ItineraryDetailsDto
+            {
+                Id = itinerary.Id,
+                Title = itinerary.Title,
+                StartDate = itinerary.StartDate,
+                EndDate = itinerary.EndDate,
+
+                Items = itinerary.ItineraryItems
+                    .OrderBy(i => i.StopOrder)
+                    .Select(i => new ItineraryItemDetailsDto
+                    {
+                        Id = i.Id,
+                        StopOrder = i.StopOrder,
+                        StartDateTime = i.StartDateTime,
+                        EndDateTime = i.EndDateTime,
+
+                        Location = new LocationDto
+                        {
+                            LocationId = i.Location.Id,
+                            Name = i.Location.Name,
+                            Address = i.Location.Address,
+                            Latitude = i.Location.Latitude,
+                            Longitude = i.Location.Longitude,
+                            Description = i.Location.Description,
+                            PlaceId = i.Location.PlaceId
+                        }
+                    })
+                    .ToList()
+            };
+
+            return Ok(result);
+        }
+        
+        [HttpGet("{id}/route")]
+        public async Task<IActionResult> GetRoute(int id)
+        {
+            var route = await _routeService.GetRoute(id);
+
+            if (route == null)
+                return NotFound();
+
+            return Ok(route);
+        }
     }
 }
