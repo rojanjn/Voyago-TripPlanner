@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 namespace TripPlanner.Controllers;
 
 // This attribute ensures that only authenticated users can access the actions in this controller.
-[Authorize] 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
