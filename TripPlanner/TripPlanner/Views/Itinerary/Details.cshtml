@@ -1,4 +1,6 @@
-@model Itinerary
+@using System.Text.Json
+@using System.Linq
+@model TripPlanner.Models.Itinerary
 
 @{
     Layout = "_Layout";
@@ -6,52 +8,110 @@
 
 <h2>@Model.Title</h2>
 
-<div class="form-card">
+<div class="details-page">
 
-    <p><strong>Country:</strong> @Model.Country</p>
+<div class="trip-layout">
 
-    <p>
-        <strong>Dates:</strong>
-        @Model.StartDate.ToShortDateString() →
-        @Model.EndDate.ToShortDateString()
-    </p>
+    <!-- LEFT: MAP -->
+    <div class="map-panel">
+        <div id="map"></div>
+        <button class="btn-add-location">Add location</button>
+    </div>
 
-    <p><strong>Description:</strong></p>
 
-    <p>@Model.Description</p>
-    
-    <h3>Attractions</h3>
+    <!-- RIGHT: TRIP DETAILS -->
+    <div class="trip-panel">
 
-    @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
-    {
-        <div class="itinerary-items">
+        <div class="trip-header">
+            <h2>@Model.Title</h2>
 
-            @foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
-            {
-                <div class="item-card">
-
-                    <div class="item-header">
-                        <strong>@item.Location.Name</strong>
-                    </div>
-
-                    <div class="item-time">
-                        @item.StartDateTime.ToString("g")
-                        →
-                        @item.EndDateTime.ToString("g")
-                    </div>
-
-                    <p>@item.Note</p>
-
-                </div>
-            }
-
+            <div class="trip-dates">
+                @Model.StartDate.ToShortDateString()
+                →
+                @Model.EndDate.ToShortDateString()
+            </div>
         </div>
-    }
-    else
-    {
-        <p>No attractions added yet.</p>
-    }
-    
-    <a asp-action="Index" class="btn-cancel">Back</a>
 
+
+        <div class="attractions-list">
+
+            @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
+            {
+                int stopNumber = 1;
+
+                foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
+                {
+                    <div class="attraction-card">
+
+                        <div class="stop-number">
+                            @stopNumber
+                        </div>
+
+                        @*<img src="@item.Location.ImageUrl"
+                             class="attraction-thumb"/>*@
+
+                        <div class="attraction-info">
+
+                            <div class="attraction-name">
+                                @item.Location.Name
+                            </div>
+
+                            <div class="attraction-address">
+                                @item.Location.Address
+                            </div>
+
+                            <div class="travel-info">
+                                @item.StartDateTime.ToString("t")
+                                →
+                                @item.EndDateTime.ToString("t")
+                            </div>
+                        </div>
+
+                        <div class="attraction-actions">
+                            <button class="btn-visibility">👁</button>
+                            <button class="btn-menu">⋯</button>
+                        </div>
+                    </div>
+                    stopNumber++;
+                }
+            }
+            else
+            {
+                <p>No attractions added yet.</p>
+            }
+        </div>
+
+        <a asp-action="Index" class="btn-back">Back</a>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY" async defer></script>
+
+<script>
+
+function initMap() {
+
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 10,
+        center: { lat: 43.6532, lng: -79.3832 }
+    });
+
+    const locations = @Html.Raw(JsonSerializer.Serialize(
+    Model.ItineraryItems.Select(i => new {
+    lat = i.Location.Latitude,
+    lng = i.Location.Longitude
+    })
+    ));
+
+    locations.forEach(loc => {
+        new google.maps.Marker({
+            position: loc,
+            map: map
+        });
+    });
+}
+
+window.onload = initMap;
+
+</script>
 </div>

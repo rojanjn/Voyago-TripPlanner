@@ -20,40 +20,6 @@
             <button type="submit" class="btn-create">Create Itinerary</button>
             <button class="btn-nav">Nav</button>
         </div>
-
-        <div class="content-panels">
-            <div class="map-panel">
-                <div id="map">Map</div>
-            </div>
-            @if (Model.Attractions != null && Model.Attractions.Any())
-            {
-                <div class="items-panel">
-                    <div class="items-list">
-                        <div class="items-panel">
-                            <div class="items-list">
-
-                                @foreach (var attraction in Model.Attractions)
-                                {
-                                    <div class="attraction-card">
-
-                                        <div class="attraction-name">
-                                            @attraction.Name
-                                        </div>
-
-                                        <div class="attraction-location">
-                                            @attraction.Address
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <p>No attractions to show.</p>
-            }
-        </div>
+        
     </div>
 </form>

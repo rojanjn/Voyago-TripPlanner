@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using TripPlanner.Models;
 using TripPlanner.Data;
 using Microsoft.EntityFrameworkCore;
-using TripPlanner.ViewModels;
 using TripPlanner.Dtos.Itinerary;
 using TripPlanner.Dtos.Location;
 using TripPlanner.Services;
@@ -50,6 +49,8 @@ namespace TripPlanner.Controllers
             if (id == null) return NotFound();
 
             var itinerary = await _context.Itineraries
+                .Include(m => m.ItineraryItems)
+                .ThenInclude(m => m.Location)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (itinerary == null) return NotFound();
@@ -68,13 +69,7 @@ namespace TripPlanner.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var vm = new CreateItineraryViewModel
-                {
-                    Itinerary = new Itinerary(),
-                    Attractions = _context.Locations.ToList()
-                };
-            
-                return View(vm);
+                return View();
         }
 
         // POST: Itinerary/Create
