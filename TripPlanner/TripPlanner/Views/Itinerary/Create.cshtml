@@ -1,4 +1,4 @@
-@model TripPlanner.ViewModels.CreateItineraryViewModel
+@model TripPlanner.Models.Itinerary
 
 @{
     Layout = "_Layout";
@@ -11,11 +11,11 @@
 <form asp-action="Create" method="post">
     <div class="trip-container">
         <div class="filter-bar">
-            <input asp-for="Itinerary.Title" placeholder="Trip Title" />
-            <input asp-for="Itinerary.StartDate" placeholder="Start Date" />
-            <input asp-for="Itinerary.EndDate" placeholder="End Date" />
+            <input asp-for="Title" placeholder="Trip Title" />
+            <input asp-for="StartDate" placeholder="Start Date" />
+            <input asp-for="EndDate" placeholder="End Date" />
   
-            <input asp-for="Itinerary.Description" placeholder="Budget" />
+            <input asp-for="Description" placeholder="Budget" />
         
             <button type="submit" class="btn-create">Create Itinerary</button>
             <button class="btn-nav">Nav</button>
