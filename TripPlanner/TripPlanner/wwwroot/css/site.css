@@ -962,3 +962,166 @@ textarea {
 body.admin-page {
     background: #0a3880;
 }
+
+.page-container{
+    width:90%;
+    margin:auto;
+}
+
+.main-grid{
+    display:grid;
+    grid-template-columns: 2fr 1fr;
+    gap:20px;
+}
+
+/* Tabs */
+
+.tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.tab{
+    background:#eeeeee;
+    border:1px solid black;
+    padding:6px 20px;
+    cursor:pointer;
+}
+
+.tab.active{
+    background:#dddddd;
+}
+
+/* Itinerary cards */
+
+.itinerary-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.itinerary-card{
+    border:1px solid black;
+    padding:15px;
+    min-height:140px;
+    background:#f5f5f5;
+    transition:0.2s;
+}
+
+.itinerary-card:hover{
+    background:#eaeaea;
+    transform:scale(1.02);
+}
+
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    font-weight:bold;
+}
+
+.dates{
+    margin-top:6px;
+    font-size:14px;
+}
+
+.note{
+    margin-top:15px;
+}
+
+/* Right panel */
+
+.nav-panel{
+    border:1px solid black;
+    padding:15px;
+}
+
+.nav-content{
+    border:1px solid black;
+    padding:30px;
+    text-align:center;
+    margin-top:10px;
+}
+
+/* Hide tabs */
+
+.tab-content{
+    display:none;
+}
+
+.tab-content.active{
+    display:block;
+}
+
+.view-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.trip-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: white;
+}
+
+.content-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem; height: 400px;
+}
+
+.map-panel, .items-panel {
+    border: 1px solid #333;
+    padding: 1rem;
+}
+
+.btn-nav {
+    float: right;
+}
+
+.itinerary-card{
+    position:relative;
+    border:1px solid black;
+    padding:15px;
+    background:#f5f5f5;
+    cursor:pointer;
+}
+
+/* Button container */
+
+.card-actions{
+    position:absolute;
+    top:8px;
+    right:8px;
+    display:flex;
+    gap:6px;
+}
+
+/* Buttons */
+
+.card-btn{
+    border:1px solid black;
+    padding:3px 8px;
+    font-size:12px;
+    text-decoration:none;
+    color:black;
+    background:#eeeeee;
+}
+
+.card-btn:hover{
+    background:#dddddd;
+}
+
+.edit-btn{
+}
+
+.delete-btn{
+}

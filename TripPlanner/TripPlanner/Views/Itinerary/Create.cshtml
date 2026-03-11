@@ -1,4 +1,4 @@
-@model Itinerary
+@model TripPlanner.ViewModels.CreateItineraryViewModel
 
 @{
     Layout = "_Layout";
@@ -11,11 +11,11 @@
 <form asp-action="Create" method="post">
     <div class="trip-container">
         <div class="filter-bar">
-            <input asp-for="Title" placeholder="Trip Title" />
-            <input asp-for="StartDate" placeholder="Start Date" />
-            <input asp-for="EndDate" placeholder="End Date" />
+            <input asp-for="Itinerary.Title" placeholder="Trip Title" />
+            <input asp-for="Itinerary.StartDate" placeholder="Start Date" />
+            <input asp-for="Itinerary.EndDate" placeholder="End Date" />
   
-            <input asp-for="Description" placeholder="Budget" />
+            <input asp-for="Itinerary.Description" placeholder="Budget" />
         
             <button type="submit" class="btn-create">Create Itinerary</button>
             <button class="btn-nav">Nav</button>
@@ -25,9 +25,35 @@
             <div class="map-panel">
                 <div id="map">Map</div>
             </div>
-            <div class="items-panel">
-                <div class="items-list">Items</div>
-            </div>
+            @if (Model.Attractions != null && Model.Attractions.Any())
+            {
+                <div class="items-panel">
+                    <div class="items-list">
+                        <div class="items-panel">
+                            <div class="items-list">
+
+                                @foreach (var attraction in Model.Attractions)
+                                {
+                                    <div class="attraction-card">
+
+                                        <div class="attraction-name">
+                                            @attraction.Name
+                                        </div>
+
+                                        <div class="attraction-location">
+                                            @attraction.Address
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>No attractions to show.</p>
+            }
         </div>
     </div>
 </form>

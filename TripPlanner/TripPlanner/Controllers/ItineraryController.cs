@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using TripPlanner.Models;
 using TripPlanner.Data;
 using Microsoft.EntityFrameworkCore;
+using TripPlanner.ViewModels;
 
 namespace TripPlanner.Controllers
 {
@@ -59,7 +60,13 @@ namespace TripPlanner.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var vm = new CreateItineraryViewModel
+                {
+                    Itinerary = new Itinerary(),
+                    Attractions = _context.Locations.ToList()
+                };
+            
+                return View(vm);
         }
 
         // POST: Itinerary/Create
