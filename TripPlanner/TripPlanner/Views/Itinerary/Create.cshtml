@@ -4,22 +4,28 @@
     Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+@section Scripts {
+    <script>
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+}
 
-<h2 class="page-title">Plan Your Trip</h2>
-
-<form asp-action="Create" method="post">
-    <div class="trip-container">
-        <div class="filter-bar">
-            <input asp-for="Title" placeholder="Trip Title" />
-            <input asp-for="StartDate" placeholder="Start Date" />
-            <input asp-for="EndDate" placeholder="End Date" />
-  
-            <input asp-for="Description" placeholder="Budget" />
-        
-            <button type="submit" class="btn-create">Create Itinerary</button>
-            <button class="btn-nav">Nav</button>
+<div class="page-container">
+    <h2 class="page-title">Plan Your Trip</h2>
+    
+    <form asp-action="Create" method="post">
+        <div class="trip-container">
+            <div class="filter-bar">
+                <input asp-for="Title" placeholder="Trip Title" />
+                <input asp-for="StartDate" placeholder="Start Date" />
+                <input asp-for="EndDate" placeholder="End Date" />
+      
+                <input asp-for="Description" placeholder="Budget" />
+            
+                <button type="submit" class="btn-create">Create Itinerary</button>
+                <button class="btn-nav">Nav</button>
+            </div>
+            
         </div>
-        
-    </div>
-</form>
+    </form>
+</div>

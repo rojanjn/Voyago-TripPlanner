@@ -966,6 +966,7 @@ body.admin-page {
 .page-container{
     width:90%;
     margin:auto;
+    padding-top: 90px;
 }
 
 .main-grid{
