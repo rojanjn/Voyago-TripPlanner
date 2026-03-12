@@ -169,8 +169,7 @@ public class ItineraryItemController : ControllerBase
                 i.Id == itemId &&
                 i.ItineraryId == itineraryId);
 
-        if (item == null)
-            return NotFound();
+        if (item == null) return NotFound();
 
         _context.ItineraryItems.Remove(item);
         await _context.SaveChangesAsync();

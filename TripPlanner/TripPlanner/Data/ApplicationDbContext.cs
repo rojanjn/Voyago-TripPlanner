@@ -12,7 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Itinerary> Itineraries => Set<Itinerary>();
     public DbSet<ItineraryItem> ItineraryItems => Set<ItineraryItem>();
     public DbSet<Location> Locations => Set<Location>();
-    public DbSet<Phrase> Phrases => Set<Phrase>();
+    // public DbSet<Phrase> Phrases => Set<Phrase>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,13 +23,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<Itinerary>().ToTable("itineraries");
         modelBuilder.Entity<ItineraryItem>().ToTable("itinerary_items");
         modelBuilder.Entity<Location>().ToTable("locations");
-        modelBuilder.Entity<Phrase>().ToTable("phrases");
+        // modelBuilder.Entity<Phrase>().ToTable("phrases");
         
         // === Relationship mapping part ===
         modelBuilder.Entity<Itinerary>()
             .HasOne(i => i.User)
             .WithMany(u => u.Itineraries)
             .HasForeignKey(I => I.UserId)
+            // Cascade => Delete related itineraryitems
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<Itinerary>()
@@ -48,13 +49,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(i => i.Location)
             .WithMany(l => l.ItineraryItems)
             .HasForeignKey(i => i.LocationId)
+            // If there are other itineraryitem are using this location, then the location won't be deleted
             .OnDelete(DeleteBehavior.Restrict);
-
+        /*
         modelBuilder.Entity<Phrase>()
             .HasOne(p => p.Country)
             .WithMany(c => c.Phrases)
             .HasForeignKey(p => p.CountryId)
             .OnDelete(DeleteBehavior.Cascade);
+        */
         
         // === Add Seed Data Part ===
         
@@ -62,8 +65,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             new Country
             {
                 CountryId = 1,
-                CountryName = "France",
-                CountryLanguage = "French"
+                CountryName = "Canada",
+                CountryLanguage = "English"
             },
             new Country
             {
@@ -74,86 +77,25 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             new Country
             {
                 CountryId = 3,
-                CountryName = "China/Taiwan",
-                CountryLanguage = "Mandarin"
+                CountryName = "China",
+                CountryLanguage = "Mandarin (Simplify Chinese)"
             },
             new Country
             {
                 CountryId = 4,
-                CountryName = "Japan",
-                CountryLanguage = "Japanese"
+                CountryName = "Taiwan",
+                CountryLanguage = "Mandarin (Traditional Chinese)"
             }
         );
-        
-        modelBuilder.Entity<Itinerary>()
-            .HasData(
-                new Itinerary {
-                    Id = 1,
-                    CountryId = 1,
-                    Title = "First Trip",
-                    StartDate = new DateTime(2026, 1, 15, 9, 0, 0, DateTimeKind.Utc),
-                    EndDate = new DateTime(2026, 3, 14, 9, 0, 0, DateTimeKind.Utc)
-                },
-                new Itinerary {
-                    Id = 2,
-                    Title = "Second Trip",
-                    StartDate = new DateTime(2026, 3, 15, 9, 0, 0, DateTimeKind.Utc),
-                    EndDate = new DateTime(2026, 6, 14, 9, 0, 0, DateTimeKind.Utc)
-                }
-                );
-        
-        modelBuilder.Entity<ItineraryItem>()
-            .HasData(
-                new ItineraryItem { 
-                    Id = 1,
-                    ItineraryId = 1,
-                    LocationId = 1,
-                    StartDateTime = new DateTime(2026, 1, 16, 9, 0, 0, DateTimeKind.Utc),
-                    EndDateTime = new DateTime(2026, 2, 15, 9, 0, 0, DateTimeKind.Utc),
-                    StopOrder = 1
-                    },
-                new ItineraryItem { 
-                    Id = 2,
-                    ItineraryId = 1,
-                    LocationId = 2,
-                    StartDateTime = new DateTime(2026, 2, 16, 9, 0, 0, DateTimeKind.Utc),
-                    EndDateTime = new DateTime(2026, 3, 15, 9, 0, 0, DateTimeKind.Utc),
-                    StopOrder = 2
-                },
-                new ItineraryItem { 
-                    Id = 3,
-                    ItineraryId = 2,
-                    LocationId = 3,
-                    StartDateTime = new DateTime(2026, 3, 16, 9, 0, 0, DateTimeKind.Utc),
-                    EndDateTime = new DateTime(2026, 4, 15, 9, 0, 0, DateTimeKind.Utc),
-                    StopOrder = 1
-                },
-                new ItineraryItem { 
-                    Id = 4,
-                    ItineraryId = 2,
-                    LocationId = 4,
-                    StartDateTime = new DateTime(2026, 4, 16, 9, 0, 0, DateTimeKind.Utc),
-                    EndDateTime = new DateTime(2026, 5, 15, 9, 0, 0, DateTimeKind.Utc),
-                    StopOrder = 2
-                },
-                new ItineraryItem { 
-                    Id = 5,
-                    ItineraryId = 2,
-                    LocationId = 4,
-                    StartDateTime = new DateTime(2026, 5, 16, 9, 0, 0, DateTimeKind.Utc),
-                    EndDateTime = new DateTime(2026, 6, 1, 9, 0, 0, DateTimeKind.Utc),
-                    StopOrder = 3
-                }
-                );
         
         modelBuilder.Entity<Location>()
             .HasData(
                 new Location { 
                     Id = 1, 
-                    Name = "Notre-Dame Basilica", 
-                    Address = "N/A For Test",
-                    Latitude = 45.504537m, 
-                    Longitude = -73.556094m
+                    Name = "CN Tower", 
+                    Address = "290 Bremner Blvd, Toronto, ON M5V 3L9",
+                    Latitude = 43.6425662m, 
+                    Longitude = -79.3870568m
                     
                 }, 
                 new Location { 
@@ -181,17 +123,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 }
             );
         
+            /*
             modelBuilder.Entity<Phrase>().HasData(
                 new Phrase {
                     PhraseId = 1,
                     CountryId = 1,
-                    Content = "Bonjour",
+                    Content = "Hello",
                     Translation = "Hello"
                 },
                 new Phrase {
                     PhraseId = 2,
                     CountryId = 1,
-                    Content = "Merci",
+                    Content = "Thank you",
                     Translation = "Thank you"
                 },
                 new Phrase {
@@ -267,7 +210,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                     Translation = "Thank you"
                 }
             );
-
+            */
         
     }
 }
