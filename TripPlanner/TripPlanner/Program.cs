@@ -70,6 +70,7 @@ using (var scope = app.Services.CreateScope())
     // These services are essential for interacting with the Identity system for roles and users.
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
     // Define the application's roles. These roles will be created if they don't already exist.
     string[] roles = { "Admin", "User" };
@@ -102,6 +103,60 @@ using (var scope = app.Services.CreateScope())
         await userManager.CreateAsync(admin, "P@ssw0rd");
         // Assign the newly created user to the "Admin" role.
         await userManager.AddToRoleAsync(admin, "Admin");
+    }
+
+    // Create seed data for itinerary after the admin had been created 
+    if (!db.Itineraries.Any())
+    {
+        var trip1 = new Itinerary
+        {
+            UserId = admin.Id,
+            CountryId = 1,
+            Title = "First Trip",
+            StartDate = new DateTime(2026, 1, 15, 9, 0, 0, DateTimeKind.Utc),
+            EndDate = new DateTime(2026, 3, 14, 9, 0, 0, DateTimeKind.Utc)
+        };
+        var trip2 = new Itinerary
+        {
+            UserId = admin.Id,
+            CountryId = 2,
+            Title = "Second Trip",
+            StartDate = new DateTime(2026, 3, 15, 9, 0, 0, DateTimeKind.Utc),
+            EndDate = new DateTime(2026, 6, 14, 9, 0, 0, DateTimeKind.Utc)
+        };
+        
+        db.Itineraries.AddRange(trip1, trip2);
+        await db.SaveChangesAsync();
+        
+        db.ItineraryItems.AddRange(
+            new ItineraryItem { 
+                ItineraryId = trip1.Id,
+                LocationId = 1,
+                StartDateTime = new DateTime(2026, 1, 16, 9, 0, 0, DateTimeKind.Utc),
+                EndDateTime = new DateTime(2026, 2, 15, 9, 0, 0, DateTimeKind.Utc),
+                StopOrder = 1
+            },
+            new ItineraryItem { 
+                ItineraryId = trip1.Id,
+                LocationId = 2,
+                StartDateTime = new DateTime(2026, 2, 16, 9, 0, 0, DateTimeKind.Utc),
+                EndDateTime = new DateTime(2026, 3, 15, 9, 0, 0, DateTimeKind.Utc),
+                StopOrder = 2
+            },
+            new ItineraryItem { 
+                ItineraryId = trip2.Id,
+                LocationId = 3,
+                StartDateTime = new DateTime(2026, 3, 16, 9, 0, 0, DateTimeKind.Utc),
+                EndDateTime = new DateTime(2026, 4, 15, 9, 0, 0, DateTimeKind.Utc),
+                StopOrder = 1
+            },
+            new ItineraryItem { 
+                ItineraryId = trip2.Id,
+                LocationId = 4,
+                StartDateTime = new DateTime(2026, 4, 16, 9, 0, 0, DateTimeKind.Utc),
+                EndDateTime = new DateTime(2026, 5, 15, 9, 0, 0, DateTimeKind.Utc),
+                StopOrder = 2
+            });
     }
 }
 

@@ -19,5 +19,5 @@ public class Country
     public string CountryLanguage { get; set; } = null!;
         
     public List<Itinerary> Itineraries { get; set; } = new();
-    public List<Phrase> Phrases { get; set; } = new();
+    // public List<Phrase> Phrases { get; set; } = new();
 }
