@@ -248,8 +248,8 @@ namespace TripPlanner.Migrations
                         new
                         {
                             CountryId = 1,
-                            CountryLanguage = "French",
-                            CountryName = "France"
+                            CountryLanguage = "English",
+                            CountryName = "Canada"
                         },
                         new
                         {
@@ -260,14 +260,14 @@ namespace TripPlanner.Migrations
                         new
                         {
                             CountryId = 3,
-                            CountryLanguage = "Mandarin",
-                            CountryName = "China/Taiwan"
+                            CountryLanguage = "Mandarin (Simplify Chinese)",
+                            CountryName = "China"
                         },
                         new
                         {
                             CountryId = 4,
-                            CountryLanguage = "Japanese",
-                            CountryName = "Japan"
+                            CountryLanguage = "Mandarin (Traditional Chinese)",
+                            CountryName = "Taiwan"
                         });
                 });
 
@@ -307,23 +307,6 @@ namespace TripPlanner.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("itineraries", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CountryId = 1,
-                            EndDate = new DateTime(2026, 3, 14, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StartDate = new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Title = "First Trip"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            EndDate = new DateTime(2026, 6, 14, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StartDate = new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            Title = "Second Trip"
-                        });
                 });
 
             modelBuilder.Entity("TripPlanner.Models.ItineraryItem", b =>
@@ -359,53 +342,6 @@ namespace TripPlanner.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("itinerary_items", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EndDateTime = new DateTime(2026, 2, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ItineraryId = 1,
-                            LocationId = 1,
-                            StartDateTime = new DateTime(2026, 1, 16, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StopOrder = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            EndDateTime = new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ItineraryId = 1,
-                            LocationId = 2,
-                            StartDateTime = new DateTime(2026, 2, 16, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StopOrder = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            EndDateTime = new DateTime(2026, 4, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ItineraryId = 2,
-                            LocationId = 3,
-                            StartDateTime = new DateTime(2026, 3, 16, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StopOrder = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            EndDateTime = new DateTime(2026, 5, 15, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ItineraryId = 2,
-                            LocationId = 4,
-                            StartDateTime = new DateTime(2026, 4, 16, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StopOrder = 2
-                        },
-                        new
-                        {
-                            Id = 5,
-                            EndDateTime = new DateTime(2026, 6, 1, 9, 0, 0, 0, DateTimeKind.Utc),
-                            ItineraryId = 2,
-                            LocationId = 4,
-                            StartDateTime = new DateTime(2026, 5, 16, 9, 0, 0, 0, DateTimeKind.Utc),
-                            StopOrder = 3
-                        });
                 });
 
             modelBuilder.Entity("TripPlanner.Models.Location", b =>
@@ -444,10 +380,10 @@ namespace TripPlanner.Migrations
                         new
                         {
                             Id = 1,
-                            Address = "N/A For Test",
-                            Latitude = 45.504537m,
-                            Longitude = -73.556094m,
-                            Name = "Notre-Dame Basilica"
+                            Address = "290 Bremner Blvd, Toronto, ON M5V 3L9",
+                            Latitude = 43.6425662m,
+                            Longitude = -79.3870568m,
+                            Name = "CN Tower"
                         },
                         new
                         {
@@ -472,132 +408,6 @@ namespace TripPlanner.Migrations
                             Latitude = 27.952822m,
                             Longitude = 109.600989m,
                             Name = "Fenghuang Ancient City"
-                        });
-                });
-
-            modelBuilder.Entity("TripPlanner.Models.Phrase", b =>
-                {
-                    b.Property<int>("PhraseId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PhraseId"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Translation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("PhraseId");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("phrases", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            PhraseId = 1,
-                            Content = "Bonjour",
-                            CountryId = 1,
-                            Translation = "Hello"
-                        },
-                        new
-                        {
-                            PhraseId = 2,
-                            Content = "Merci",
-                            CountryId = 1,
-                            Translation = "Thank you"
-                        },
-                        new
-                        {
-                            PhraseId = 3,
-                            Content = "Où sont les toilettes ?",
-                            CountryId = 1,
-                            Translation = "Where is the restroom?"
-                        },
-                        new
-                        {
-                            PhraseId = 4,
-                            Content = "Combien ça coûte ?",
-                            CountryId = 1,
-                            Translation = "How much is it?"
-                        },
-                        new
-                        {
-                            PhraseId = 5,
-                            Content = "درود",
-                            CountryId = 2,
-                            Translation = "Hello"
-                        },
-                        new
-                        {
-                            PhraseId = 6,
-                            Content = "ممنونم",
-                            CountryId = 2,
-                            Translation = "Thank you"
-                        },
-                        new
-                        {
-                            PhraseId = 7,
-                            Content = "سرویس بهداشتی کجاست؟",
-                            CountryId = 2,
-                            Translation = "Where is the restroom?"
-                        },
-                        new
-                        {
-                            PhraseId = 8,
-                            Content = "این چقدر است؟",
-                            CountryId = 2,
-                            Translation = "How much is it?"
-                        },
-                        new
-                        {
-                            PhraseId = 9,
-                            Content = "你好",
-                            CountryId = 3,
-                            Translation = "Hello"
-                        },
-                        new
-                        {
-                            PhraseId = 10,
-                            Content = "谢谢",
-                            CountryId = 3,
-                            Translation = "Thank you"
-                        },
-                        new
-                        {
-                            PhraseId = 11,
-                            Content = "请问卫生间在哪？",
-                            CountryId = 3,
-                            Translation = "Where is the restroom?"
-                        },
-                        new
-                        {
-                            PhraseId = 12,
-                            Content = "这个多少钱？",
-                            CountryId = 3,
-                            Translation = "How much is it?"
-                        },
-                        new
-                        {
-                            PhraseId = 13,
-                            Content = "こんにちは",
-                            CountryId = 4,
-                            Translation = "Hello"
-                        },
-                        new
-                        {
-                            PhraseId = 14,
-                            Content = "ありがとう",
-                            CountryId = 4,
-                            Translation = "Thank you"
                         });
                 });
 
@@ -688,17 +498,6 @@ namespace TripPlanner.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("TripPlanner.Models.Phrase", b =>
-                {
-                    b.HasOne("TripPlanner.Models.Country", "Country")
-                        .WithMany("Phrases")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("TripPlanner.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Itineraries");
@@ -707,8 +506,6 @@ namespace TripPlanner.Migrations
             modelBuilder.Entity("TripPlanner.Models.Country", b =>
                 {
                     b.Navigation("Itineraries");
-
-                    b.Navigation("Phrases");
                 });
 
             modelBuilder.Entity("TripPlanner.Models.Itinerary", b =>
