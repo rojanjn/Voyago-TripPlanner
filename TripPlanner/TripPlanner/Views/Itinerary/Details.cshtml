@@ -6,12 +6,6 @@
     Layout = "_Layout";
 }
 
-@section Scripts {
-    <script>
-        document.querySelector('.navbar').classList.add('scrolled');
-    </script>
-}
-
 <div class="details-page page-container">
     
     <div class="trip-layout">
@@ -19,7 +13,7 @@
         <!-- LEFT: MAP -->
         <div class="details-map-panel">
             <div id="map"></div>
-            <button class="btn-add-location">Add location</button>
+            <button id="btnAddAttraction" class="btn-add-attraction">Add attraction</button>
         </div>
     
     
@@ -35,7 +29,12 @@
                     @Model.EndDate.ToShortDateString()
                 </div>
             </div>
-    
+            
+            <div class="attraction-search">
+                <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
+                <div id="searchResults" class="search-dropdown"></div>
+                @*<button id="btnAddAttraction" class="btn-add-attraction" disabled>Add Attraction</button>*@
+            </div>
     
             <div class="attractions-list">
     
@@ -45,7 +44,7 @@
     
                     foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
                     {
-                        <div class="attraction-card">
+                        <div class="attraction-card" data-item-id="@item.Id">
     
                             <div class="stop-number">
                                 @stopNumber
@@ -72,8 +71,7 @@
                             </div>
     
                             <div class="attraction-actions">
-                                <button class="btn-visibility">👁</button>
-                                <button class="btn-menu">⋯</button>
+                                <button class="btn-remove">✕</button>
                             </div>
                         </div>
                         stopNumber++;
@@ -91,24 +89,24 @@
 </div>
 
 @section Scripts {
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY" async defer></script>
-}
 
-@section Scripts {
+    <script>
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+    
     <script>
         function initMap() {
-            
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: { lat: 43.6532, lng: -79.3832 }
             });
             
             const locations = @Html.Raw(JsonSerializer.Serialize(
-            Model.ItineraryItems.Select(i => new {
-            lat = i.Location.Latitude,
-            lng = i.Location.Longitude
-            })
-            ));
+                                  Model.ItineraryItems.Select(i => new {
+                                      lat = i.Location.Latitude,
+                                      lng = i.Location.Longitude
+                                  })
+                              ));
             
             locations.forEach(loc => {
                 new google.maps.Marker({
@@ -117,8 +115,74 @@
                 });
             });
         }
-            
-    window.onload = initMap;
-        
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&callback=initMap" 
+            async defer></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let selectedLocationId = null;
+
+            const searchInput = document.getElementById('attractionSearch');
+            const searchResults = document.getElementById('searchResults');
+            const btnAdd = document.getElementById('btnAddAttraction');
+
+            searchInput.addEventListener('input', async () => {
+                const query = searchInput.value.trim();
+                if (query.length < 2) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                const response = await fetch(`/Itinerary/SearchAttractions?query=${encodeURIComponent(query)}`);
+                const locations = await response.json();
+
+                searchResults.innerHTML = '';
+                locations.forEach(loc => {
+                    const div = document.createElement('div');
+                    div.className = 'search-result-item';
+                    div.textContent = `${loc.name} — ${loc.address}`;
+                    div.addEventListener('click', () => {
+                        selectedLocationId = loc.id;
+                        searchInput.value = loc.name;
+                        searchResults.innerHTML = '';
+                        btnAdd.disabled = false;
+                    });
+                    searchResults.appendChild(div);
+                });
+            });
+
+            btnAdd.addEventListener('click', async () => {
+                if (!selectedLocationId) return;
+                
+                await fetch('/Itinerary/AddAttraction', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itineraryId: @Model.Id,
+                        locationId: selectedLocationId
+                    })
+                });
+
+                // Reload the page to show the new attraction
+                location.reload();
+            });
+
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const card = btn.closest('.attraction-card');
+                    const itineraryItemId = card.dataset.itemId;
+
+                    await fetch('/Itinerary/RemoveAttraction', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itineraryItemId: parseInt(itineraryItemId) })
+                    });
+
+                    location.reload();
+                });
+            });
+        })
     </script>
 }

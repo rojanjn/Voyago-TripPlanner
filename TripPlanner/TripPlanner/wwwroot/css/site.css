@@ -1157,7 +1157,7 @@ body.admin-page {
     margin-bottom:12px;
 }
 
-.details-page .btn-add-location{
+.details-page .btn-add-attraction{
     border:none;
     background:var(--blue);
     color:white;
@@ -1169,7 +1169,7 @@ body.admin-page {
     transition:0.2s;
 }
 
-.details-page .btn-add-location:hover{
+.details-page .btn-add-attraction:hover{
     background:var(--blue-dark);
 }
 
@@ -1257,6 +1257,31 @@ body.admin-page {
     font-size:0.8rem;
     color:#777;
     margin-top:3px;
+}
+
+/* Search */
+.attraction-search {
+    position: relative;
+}
+
+.search-dropdown {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    z-index: 9999;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    background: #f0f0f0;
 }
 
 /* Actions */
