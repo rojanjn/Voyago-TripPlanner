@@ -86,7 +86,7 @@ using (var scope = app.Services.CreateScope())
     // Create default admin user
     // This section attempts to find an admin user by a predefined email.
     // If no admin user is found, a new one is created and assigned the "Admin" role.
-    var adminEmail = "main@main.com";
+    var adminEmail = "admin@admin.com";
     var admin = await userManager.FindByEmailAsync(adminEmail);
 
     // If the admin user does not exist, create a new IdentityUser instance.
