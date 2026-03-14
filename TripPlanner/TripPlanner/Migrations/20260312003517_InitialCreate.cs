@@ -222,27 +222,6 @@ namespace TripPlanner.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "phrases",
-                columns: table => new
-                {
-                    PhraseId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CountryId = table.Column<int>(type: "integer", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
-                    Translation = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_phrases", x => x.PhraseId);
-                    table.ForeignKey(
-                        name: "FK_phrases_countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "countries",
-                        principalColumn: "CountryId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "itinerary_items",
                 columns: table => new
                 {
@@ -277,71 +256,21 @@ namespace TripPlanner.Migrations
                 columns: new[] { "CountryId", "CountryLanguage", "CountryName" },
                 values: new object[,]
                 {
-                    { 1, "French", "France" },
+                    { 1, "English", "Canada" },
                     { 2, "Persian (Farsi)", "Iran" },
-                    { 3, "Mandarin", "China/Taiwan" },
-                    { 4, "Japanese", "Japan" }
+                    { 3, "Mandarin (Simplify Chinese)", "China" },
+                    { 4, "Mandarin (Traditional Chinese)", "Taiwan" }
                 });
-
-            migrationBuilder.InsertData(
-                table: "itineraries",
-                columns: new[] { "itinerary_id", "CountryId", "Description", "EndDate", "StartDate", "Title", "UserId" },
-                values: new object[] { 2, null, null, new DateTime(2026, 6, 14, 9, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc), "Second Trip", null });
 
             migrationBuilder.InsertData(
                 table: "locations",
                 columns: new[] { "Id", "Address", "Description", "Latitude", "Longitude", "Name", "PlaceId" },
                 values: new object[,]
                 {
-                    { 1, "N/A For Test", null, 45.504537m, -73.556094m, "Notre-Dame Basilica", null },
+                    { 1, "290 Bremner Blvd, Toronto, ON M5V 3L9", null, 43.6425662m, -79.3870568m, "CN Tower", null },
                     { 2, "Isfahan, Isfahan Province, Iran", null, 32.65745m, 51.677778m, "Naqsh-e Jahan Square", null },
                     { 3, "Yuchi Township, Nantou County, Taiwan", null, 23.866667m, 120.916667m, "Sun Moon Lake", null },
                     { 4, "Tuojiang Town, Fenghuang County, Xiangxi Tujia and Miao Autonomous Prefecture of Hunan Province", null, 27.952822m, 109.600989m, "Fenghuang Ancient City", null }
-                });
-
-            migrationBuilder.InsertData(
-                table: "itineraries",
-                columns: new[] { "itinerary_id", "CountryId", "Description", "EndDate", "StartDate", "Title", "UserId" },
-                values: new object[] { 1, 1, null, new DateTime(2026, 3, 14, 9, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 1, 15, 9, 0, 0, 0, DateTimeKind.Utc), "First Trip", null });
-
-            migrationBuilder.InsertData(
-                table: "itinerary_items",
-                columns: new[] { "Id", "EndDateTime", "ItineraryId", "LocationId", "Note", "StartDateTime", "StopOrder" },
-                values: new object[,]
-                {
-                    { 3, new DateTime(2026, 4, 15, 9, 0, 0, 0, DateTimeKind.Utc), 2, 3, null, new DateTime(2026, 3, 16, 9, 0, 0, 0, DateTimeKind.Utc), 1 },
-                    { 4, new DateTime(2026, 5, 15, 9, 0, 0, 0, DateTimeKind.Utc), 2, 4, null, new DateTime(2026, 4, 16, 9, 0, 0, 0, DateTimeKind.Utc), 2 },
-                    { 5, new DateTime(2026, 6, 1, 9, 0, 0, 0, DateTimeKind.Utc), 2, 4, null, new DateTime(2026, 5, 16, 9, 0, 0, 0, DateTimeKind.Utc), 3 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "phrases",
-                columns: new[] { "PhraseId", "Content", "CountryId", "Translation" },
-                values: new object[,]
-                {
-                    { 1, "Bonjour", 1, "Hello" },
-                    { 2, "Merci", 1, "Thank you" },
-                    { 3, "Où sont les toilettes ?", 1, "Where is the restroom?" },
-                    { 4, "Combien ça coûte ?", 1, "How much is it?" },
-                    { 5, "درود", 2, "Hello" },
-                    { 6, "ممنونم", 2, "Thank you" },
-                    { 7, "سرویس بهداشتی کجاست؟", 2, "Where is the restroom?" },
-                    { 8, "این چقدر است؟", 2, "How much is it?" },
-                    { 9, "你好", 3, "Hello" },
-                    { 10, "谢谢", 3, "Thank you" },
-                    { 11, "请问卫生间在哪？", 3, "Where is the restroom?" },
-                    { 12, "这个多少钱？", 3, "How much is it?" },
-                    { 13, "こんにちは", 4, "Hello" },
-                    { 14, "ありがとう", 4, "Thank you" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "itinerary_items",
-                columns: new[] { "Id", "EndDateTime", "ItineraryId", "LocationId", "Note", "StartDateTime", "StopOrder" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(2026, 2, 15, 9, 0, 0, 0, DateTimeKind.Utc), 1, 1, null, new DateTime(2026, 1, 16, 9, 0, 0, 0, DateTimeKind.Utc), 1 },
-                    { 2, new DateTime(2026, 3, 15, 9, 0, 0, 0, DateTimeKind.Utc), 1, 2, null, new DateTime(2026, 2, 16, 9, 0, 0, 0, DateTimeKind.Utc), 2 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -400,11 +329,6 @@ namespace TripPlanner.Migrations
                 name: "IX_itinerary_items_LocationId",
                 table: "itinerary_items",
                 column: "LocationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_phrases_CountryId",
-                table: "phrases",
-                column: "CountryId");
         }
 
         /// <inheritdoc />
@@ -427,9 +351,6 @@ namespace TripPlanner.Migrations
 
             migrationBuilder.DropTable(
                 name: "itinerary_items");
-
-            migrationBuilder.DropTable(
-                name: "phrases");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
