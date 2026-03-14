@@ -32,14 +32,19 @@ namespace TripPlanner.Controllers
             if (User.IsInRole("Admin"))
             {
                 // Admin sees all itineraries
-                return View(await _context.Itineraries.ToListAsync());
+                return View(await _context.Itineraries
+                    .Include(i => i.Country)
+                    .OrderByDescending(i => i.StartDate)
+                    .ToListAsync());
             }
 
             // Normal users only see their own itineraries
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             return View(await _context.Itineraries
+                .Include(i => i.Country)
                 .Where(i => i.UserId == userId)
+                .OrderByDescending(i => i.StartDate)
                 .ToListAsync());
         }
 
@@ -50,6 +55,7 @@ namespace TripPlanner.Controllers
             if (id == null) return NotFound();
 
             var itinerary = await _context.Itineraries
+                .Include(m => m.Country)
                 .Include(m => m.ItineraryItems)
                 .ThenInclude(m => m.Location)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -70,6 +76,9 @@ namespace TripPlanner.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            ViewBag.Countries = _context.Countries
+                .OrderBy(c => c.CountryName)
+                .ToList();
                 return View();
         }
 
@@ -111,6 +120,7 @@ namespace TripPlanner.Controllers
                 if (itinerary.UserId != userId) return Forbid();
             }
 
+            ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
             return View(itinerary);
         }
 
@@ -175,6 +185,7 @@ namespace TripPlanner.Controllers
             if (id == null) return NotFound();
 
             var itinerary = await _context.Itineraries
+                .Include(m => m.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (itinerary == null) return NotFound();

@@ -14,18 +14,34 @@
     <h2 class="page-title">Plan Your Trip</h2>
     
     <form asp-action="Create" method="post">
-        <div class="trip-container">
-            <div class="filter-bar">
-                <input asp-for="Title" placeholder="Trip Title" />
-                <input asp-for="StartDate" placeholder="Start Date" />
-                <input asp-for="EndDate" placeholder="End Date" />
-      
-                <input asp-for="Description" placeholder="Budget" />
+        <div class="modal-card">
+            <input asp-for="Title" placeholder="Trip Title" />
             
-                <button type="submit" class="btn-create">Create Itinerary</button>
-                <button class="btn-nav">Nav</button>
+            <div class="modal-header">
+                <h3>Where are you going?</h3>
             </div>
             
+            <select asp-for="CountryId" class="modal-input">
+                <option value="Select a Destination..."></option>
+                @foreach (var country in ViewBag.Countries)
+                {
+                    <option value="@country.CountryId">@country.CountryName</option>
+                }
+            </select>
+            <input asp-for="Description" placeholder="Description"/>
+            
+            <div class="dates-section">
+                <label class="dates-label">Add Dates <span class="optional">(Optional)</span></label>
+                <div class="dates-row">
+                    <input asp-for="StartDate" class="date-input" placeholder="Start" />
+                    <input asp-for="EndDate" class="date-input" placeholder="End" />
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-create">Create</button>
+                <a asp-action="Index" class="btn-cancel">Cancel</a>
+            </div>
         </div>
     </form>
 </div>
