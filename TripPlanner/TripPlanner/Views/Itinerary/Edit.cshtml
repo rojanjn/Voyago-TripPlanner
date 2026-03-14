@@ -11,39 +11,44 @@
 }
 
 <div class="page-container">
-    <h2>Edit Itinerary</h2>
+    <h2 class="page-title">Edit Your Trip</h2>
 
     <form asp-action="Edit" method="post">
         <!--- Hidden field including Id in form submission, linking data to the correct record in the database. --->
         @Html.HiddenFor(model => model.Id)
         
-        <div class="edit-form">
-            <label asp-for="Title" class="control-label"></label>
-            <input asp-for="Title" class="form-control" />
+        <div class="modal-card">
+            <input asp-for="Title" placeholder="Trip Title" />
             <span asp-validation-for="Title" class="text-danger"></span> 
-        </div>
-        
-        <div class="edit-form">
-            <label asp-for="Description" class="control-label"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span> 
-        </div>
-        
-        <div class="edit-form">
-            <label asp-for="StartDate" class="control-label"></label>
-            <input asp-for="StartDate" class="form-control" />
-            <span asp-validation-for="StartDate" class="text-danger"></span> 
-        </div>
-        
-        <div class="edit-form">
-            <label asp-for="EndDate" class="control-label"></label>
-            <input asp-for="EndDate" class="form-control" />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
-        
-        <div class="edit-form">
-            <input type="submit" value="Confirm" class="btn btn-primary"/>
-            <a asp-action="Index" class="btn btn-warning">Cancel</a>
+            
+            <div class="modal-header">
+                <h3>Where are you going?</h3>
+            </div>
+            
+            <select asp-for="CountryId" class="modal-input">
+                <option value="Select a Destination..."></option>
+                @foreach (var country in ViewBag.Countries)
+                {
+                    <option value="@country.CountryId">@country.CountryName</option>
+                }
+            </select>
+            <input asp-for="Description" placeholder="Description"/>
+            
+            <div class="dates-section">
+                <label class="dates-label">Add Dates <span class="optional">(Optional)</span></label>
+                <div class="dates-row">
+                    <input asp-for="StartDate" class="date-input" placeholder="Start" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                    
+                    <input asp-for="EndDate" class="date-input" placeholder="End" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-create">Create</button>
+                <a asp-action="Index" class="btn-cancel">Cancel</a>
+            </div>
         </div>
     </form>
 </div>

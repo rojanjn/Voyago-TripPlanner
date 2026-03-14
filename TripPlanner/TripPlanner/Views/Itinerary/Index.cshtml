@@ -12,9 +12,10 @@
 
 <div class="page-container">
     
-    <h2 class="view-title">View</h2>
-    
-    <a asp-action="Create" class="btn btn-primary">Create New Project</a> 
+    <div class="view-header">
+        <h2 class="view-title">View</h2>
+        <a asp-action="Create" class="add-itinerary">Add Itinerary</a>
+    </div>
 
     <div class="tabs">
         <button class="tab active" onclick="showTab('current')">Current</button>
@@ -34,7 +35,6 @@
                              onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
 
                             <div class="card-actions">
-
                                 <a asp-action="Edit"
                                    asp-route-id="@item.Id"
                                    class="card-btn edit-btn"
@@ -48,12 +48,11 @@
                                    onclick="event.stopPropagation();">
                                     Delete
                                 </a>
-
                             </div>
 
                             <div class="card-header">
                                 <span class="title">@item.Title</span>
-                                <span class="country">@item.Country</span>
+                                <span class="country">@item.Country?.CountryName</span>
                             </div>
 
                             <div class="dates">
@@ -73,11 +72,12 @@
                 <div class="itinerary-grid">
                     @foreach (var item in Model.Where(t => t.EndDate < DateTime.Now))
                     {
-                        <div class="itinerary-card">
+                        <div class="itinerary-card" 
+                             onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
 
                             <div class="card-header">
                                 <span class="title">@item.Title</span>
-                                <span class="country">@item.Country</span>
+                                <span class="country">@item.Country?.CountryName</span>
                             </div>
 
                             <div class="dates">

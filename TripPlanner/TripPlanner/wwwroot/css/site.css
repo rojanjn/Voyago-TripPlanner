@@ -1032,6 +1032,11 @@ body.admin-page {
 
 /* Right panel */
 
+.add-itinerary{
+    border:1px solid black;
+    padding:15px;
+}
+
 .nav-panel{
     border:1px solid black;
     padding:15px;

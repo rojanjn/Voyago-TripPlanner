@@ -12,6 +12,11 @@
     
         <!-- LEFT: MAP -->
         <div class="details-map-panel">
+            <div class="attraction-search">
+                <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
+                <div id="searchResults" class="search-dropdown"></div>
+            </div>
+            
             <div id="map"></div>
             <button id="btnAddAttraction" class="btn-add-attraction">Add attraction</button>
         </div>
@@ -22,18 +27,20 @@
     
             <div class="trip-header">
                 <h2>@Model.Title</h2>
+                
+                <div class="trip-country">
+                    @Model.Country?.CountryName
+                </div>
+
+                <div class="trip-description">
+                    @Model.Description
+                </div>
     
                 <div class="trip-dates">
                     @Model.StartDate.ToShortDateString()
                     →
                     @Model.EndDate.ToShortDateString()
                 </div>
-            </div>
-            
-            <div class="attraction-search">
-                <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
-                <div id="searchResults" class="search-dropdown"></div>
-                @*<button id="btnAddAttraction" class="btn-add-attraction" disabled>Add Attraction</button>*@
             </div>
     
             <div class="attractions-list">
