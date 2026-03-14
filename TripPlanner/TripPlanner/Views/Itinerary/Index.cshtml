@@ -4,47 +4,94 @@
     ViewData["Title"]="Itineraries";
 }
 
-<!DOCTYPE html>
-
-<body>
-<h1>Itineraries</h1>
-
-<a asp-action="Create" class="btn btn-primary">Create New Itinerary</a>
-@if (Model.Any())
-{
-    <table class="table"> 
-        <thead> 
-            <tr> 
-                <th>ID</th> 
-                <th>Title</th> 
-                <th>Start Date</th> 
-                <th>End Date</th>
-            </tr> 
-        </thead> 
-            
-        <tbody>
-
-            <!---Foreach loop is used to display the itineraries--->
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@Html.DisplayFor(modelItem => item.Title, "Title")</td>
-                    <td>@Html.DisplayFor(modelItem => item.StartDate, 
-                            "Start Date")</td>
-                    <td>@Html.DisplayFor(modelItem => item.EndDate, 
-                            "End Date")</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody> 
-    </table> 
+@section Scripts {
+    <script>
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
 }
-else
-{
-    <p>No itineraries have been created.</p>
-}
-</body>
+
+<div class="page-container">
+    
+    <h2 class="view-title">View</h2>
+    
+    <a asp-action="Create" class="btn btn-primary">Create New Project</a> 
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('current')">Current</button>
+        <button class="tab" onclick="showTab('past')">Past</button>
+    </div>
+
+    <div class="main-grid">
+
+        <!-- Left side: itineraries -->
+        <div class="itinerary-section">
+
+            <div id="current" class="tab-content active">
+                <div class="itinerary-grid">
+                    @foreach (var item in Model.Where(t => t.EndDate >= DateTime.Now))
+                    {
+                        <div class="itinerary-card" 
+                             onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
+
+                            <div class="card-actions">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="card-btn edit-btn"
+                                   onclick="event.stopPropagation();">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.Id"
+                                   class="card-btn delete-btn"
+                                   onclick="event.stopPropagation();">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                            <div class="card-header">
+                                <span class="title">@item.Title</span>
+                                <span class="country">@item.Country</span>
+                            </div>
+
+                            <div class="dates">
+                                @item.StartDate.ToShortDateString() →
+                                @item.EndDate.ToShortDateString()
+                            </div>
+
+                            <p class="note">
+                                @item.Description
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div id="past" class="tab-content">
+                <div class="itinerary-grid">
+                    @foreach (var item in Model.Where(t => t.EndDate < DateTime.Now))
+                    {
+                        <div class="itinerary-card">
+
+                            <div class="card-header">
+                                <span class="title">@item.Title</span>
+                                <span class="country">@item.Country</span>
+                            </div>
+
+                            <div class="dates">
+                                @item.StartDate.ToShortDateString() →
+                                @item.EndDate.ToShortDateString()
+                            </div>
+
+                            <p class="note">
+                                @item.Description
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
