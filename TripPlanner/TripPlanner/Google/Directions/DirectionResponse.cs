@@ -22,12 +22,14 @@ public class Leg
     public Duration Duration { get; set; } = new();
 }
 
-public class Distance
-{
-    public string Text { get; set; } = "";
-}
-
 public class Duration
 {
     public string Text { get; set; } = "";
+    public int Value { get; set; }  // ← Google API will return seconds
+}
+
+public class Distance
+{
+    public string Text { get; set; } = "";
+    public int Value { get; set; }  // ← meter
 }

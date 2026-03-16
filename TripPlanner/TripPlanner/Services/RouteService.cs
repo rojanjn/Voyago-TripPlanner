@@ -71,8 +71,18 @@ public class RouteService
         return new RouteDto
         {
             Polyline = route.Overview_Polyline.Points,
-            Distance = route.Legs.Sum(l => ParseDistance(l.Distance.Text)).ToString() + " km",
-            Duration = route.Legs.First().Duration.Text
+    
+            TotalDistance = route.Legs.Sum(l => ParseDistance(l.Distance.Text)).ToString() + " km",
+    
+            // Sum all the legs (Unit: Second, fetch from DirectionsResponse)
+            TotalDuration = SumDurations(route.Legs),
+    
+            // Per-leg duration and distance
+            Legs = route.Legs.Select(l => new LegDto
+            {
+                Distance = l.Distance.Text,
+                Duration = l.Duration.Text
+            }).ToList()
         };
     }
 
@@ -80,5 +90,15 @@ public class RouteService
     {
         var value = text.Replace(" km", "");
         return double.TryParse(value, out var d) ? d : 0;
+    }
+    
+    private string SumDurations(List<Leg> legs)
+    {
+        var totalSeconds = legs.Sum(l => l.Duration.Value);
+        var ts = TimeSpan.FromSeconds(totalSeconds);
+    
+        if (ts.Hours > 0)
+            return $"{ts.Hours} hour {ts.Minutes} mins";
+        return $"{ts.Minutes} mins";
     }
 }
