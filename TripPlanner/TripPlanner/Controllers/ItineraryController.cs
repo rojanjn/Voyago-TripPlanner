@@ -371,5 +371,29 @@ namespace TripPlanner.Controllers
 
             return Ok();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ReorderAttraction([FromBody] ReorderAttractionsDto dto)
+        {
+            var itinerary = await _context.Itineraries.FindAsync(dto.ItineraryId);
+            if (itinerary == null) return NotFound();
+
+            if (!User.IsInRole("Admin"))
+            {
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (itinerary.UserId != userId) return Forbid();
+            }
+
+            for (int i = 0; i < dto.ItemIds.Count; i++)
+            {
+                var item = await _context.ItineraryItems.FindAsync(dto.ItemIds[i]);
+                if (item == null) return NotFound();
+                item.StopOrder = i + 1;
+            }
+            
+            await _context.SaveChangesAsync();
+            
+            return Ok();
+        }
     }
 }

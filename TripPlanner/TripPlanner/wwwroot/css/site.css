@@ -1228,6 +1228,14 @@ body.admin-page {
     background:#f1f5fd;
 }
 
+/* Dragging */
+.drag-placeholder {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
 /* Stop number */
 
 .details-page .stop-number{

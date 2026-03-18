@@ -52,31 +52,33 @@
                     foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
                     {
                         <div class="attraction-card" data-item-id="@item.Id">
-    
+                            
+                            <div class="drag-handle">☰</div>
+
                             <div class="stop-number">
                                 @stopNumber
                             </div>
-    
+
                             @*<img src="@item.Location.ImageUrl"
                                  class="attraction-thumb"/>*@
-    
+
                             <div class="attraction-info">
-    
+
                                 <div class="attraction-name">
                                     @item.Location.Name
                                 </div>
-    
+
                                 <div class="attraction-address">
                                     @item.Location.Address
                                 </div>
-    
+
                                 <div class="travel-info">
                                     @item.StartDateTime.ToString("t")
                                     →
                                     @item.EndDateTime.ToString("t")
                                 </div>
                             </div>
-    
+
                             <div class="attraction-actions">
                                 <button class="btn-remove">✕</button>
                             </div>
@@ -187,6 +189,88 @@
                     location.reload();
                 });
             });
+
+            const attractionsList = document.querySelector('.attractions-list');
+            let draggedCard = null;
+            let placeholder = document.createElement('div');
+            placeholder.className = 'drag-placeholder';
+
+            document.querySelectorAll('.attraction-card').forEach(card => {
+                const handle = card.querySelector('.drag-handle');
+
+                handle.addEventListener('mousedown', (e) => {
+                    draggedCard = card;
+                    const rect = card.getBoundingClientRect();
+
+                    card.style.width = rect.width + 'px';
+                    card.style.position = 'fixed';
+                    card.style.top = rect.top + 'px';
+                    card.style.left = rect.left + 'px';
+                    card.style.zIndex = '1000';
+                    card.style.opacity = '0.8';
+                    card.style.pointerEvents = 'none';
+
+                    placeholder.style.height = rect.height + 'px';
+                    card.parentNode.insertBefore(placeholder, card);
+
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                });
+            });
+
+            function onMouseMove(e) {
+                if (!draggedCard) return;
+
+                draggedCard.style.top = e.clientY - draggedCard.offsetHeight / 2 + 'px';
+
+                const cards = [...attractionsList.querySelectorAll('.attraction-card:not(.dragging)')];
+                const closest = cards.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = e.clientY - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset, element: child };
+                    }
+                    return closest;
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+
+                if (closest) {
+                    attractionsList.insertBefore(placeholder, closest);
+                } else {
+                    attractionsList.appendChild(placeholder);
+                }
+}
+
+            async function onMouseUp() {
+                if (!draggedCard) return;
+
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                draggedCard.style.position = '';
+                draggedCard.style.top = '';
+                draggedCard.style.left = '';
+                draggedCard.style.width = '';
+                draggedCard.style.zIndex = '';
+                draggedCard.style.opacity = '';
+                draggedCard.style.pointerEvents = '';
+
+                attractionsList.insertBefore(draggedCard, placeholder);
+                placeholder.remove();
+
+                const itemIds = [...attractionsList.querySelectorAll('.attraction-card')]
+                    .map(c => parseInt(c.dataset.itemId));
+
+                await fetch('/Itinerary/ReorderAttractions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itineraryId: @Model.Id,
+                        itemIds: itemIds
+                    })
+                });
+
+                draggedCard = null;
+            }
         });
         @*document.addEventListener('DOMContentLoaded', () => {
             let selectedLocationId = null;
