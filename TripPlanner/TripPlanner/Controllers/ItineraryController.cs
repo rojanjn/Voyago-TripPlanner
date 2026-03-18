@@ -289,7 +289,7 @@ namespace TripPlanner.Controllers
             return Ok(route);
         }
         
-        [HttpGet]
+        /*[HttpGet]
         public async Task<IActionResult> SearchAttractions(string query)
         {
             var results = await _context.Locations
@@ -298,7 +298,7 @@ namespace TripPlanner.Controllers
                 .ToListAsync();
 
             return Json(results);
-        }
+        }*/
         
         [HttpPost]
         public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)
@@ -312,6 +312,25 @@ namespace TripPlanner.Controllers
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 if (itinerary.UserId != userId) return Forbid();
             }
+            
+            // Check if location already exists by PlaceId
+            var location = await _context.Locations
+                .FirstOrDefaultAsync(l => l.PlaceId == dto.PlaceId);
+            
+            // If not, create it
+            if (location == null)
+            {
+                location = new Location
+                {
+                    Name = dto.Name,
+                    Address = dto.Address,
+                    Latitude = dto.Latitude,
+                    Longitude = dto.Longitude,
+                    PlaceId = dto.PlaceId
+                };
+                _context.Locations.Add(location);
+                await _context.SaveChangesAsync();
+            }
 
             var nextStopOrder = await _context.ItineraryItems
                 .Where(i => i.ItineraryId == dto.ItineraryId)
@@ -320,7 +339,7 @@ namespace TripPlanner.Controllers
             var item = new ItineraryItem
             {
                 ItineraryId = dto.ItineraryId,
-                LocationId = dto.LocationId,
+                LocationId = location.Id,
                 StopOrder = nextStopOrder + 1,
                 StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc),
                 EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc)

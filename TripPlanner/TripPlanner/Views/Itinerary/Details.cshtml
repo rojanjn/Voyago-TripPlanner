@@ -14,7 +14,7 @@
         <div class="details-map-panel">
             <div class="attraction-search">
                 <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
-                <div id="searchResults" class="search-dropdown"></div>
+                @*<div id="searchResults" class="search-dropdown"></div>*@
             </div>
             
             <div id="map"></div>
@@ -121,14 +121,74 @@
                     map: map
                 });
             });
+
+            let selectedPlace = null;
+            const searchInput = document.getElementById('attractionSearch');
+            const btnAdd = document.getElementById('btnAddAttraction');
+
+            // Initialize Google Places Autocomplete
+            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+                fields: ['place_id', 'name', 'formatted_address', 'geometry']
+            });
+
+            // When a place is selected from the dropdown
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) return;
+
+                selectedPlace = {
+                    placeId: place.place_id,
+                    name: place.name,
+                    address: place.formatted_address,
+                    latitude: place.geometry.location.lat(),
+                    longitude: place.geometry.location.lng()
+                };
+
+                btnAdd.disabled = false;
+            });
+
+            btnAdd.addEventListener('click', async () => {
+                if (!selectedPlace) return;
+
+                await fetch('/Itinerary/AddAttraction', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itineraryId: @Model.Id,
+                        placeId: selectedPlace.placeId,
+                        name: selectedPlace.name,
+                        address: selectedPlace.address,
+                        latitude: selectedPlace.latitude,
+                        longitude: selectedPlace.longitude
+                    })
+                });
+
+                location.reload();
+            });
         }
     </script>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&callback=initMap" 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&libraries=places&v=weekly&callback=initMap" 
             async defer></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const card = btn.closest('.attraction-card');
+                    const itineraryItemId = card.dataset.itemId;
+
+                    await fetch('/Itinerary/RemoveAttraction', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itineraryItemId: parseInt(itineraryItemId) })
+                    });
+
+                    location.reload();
+                });
+            });
+        });
+        @*document.addEventListener('DOMContentLoaded', () => {
             let selectedLocationId = null;
 
             const searchInput = document.getElementById('attractionSearch');
@@ -176,20 +236,7 @@
                 location.reload();
             });
 
-            document.querySelectorAll('.btn-remove').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const card = btn.closest('.attraction-card');
-                    const itineraryItemId = card.dataset.itemId;
-
-                    await fetch('/Itinerary/RemoveAttraction', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ itineraryItemId: parseInt(itineraryItemId) })
-                    });
-
-                    location.reload();
-                });
-            });
-        })
+            
+        })*@
     </script>
 }
