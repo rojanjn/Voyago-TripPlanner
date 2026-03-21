@@ -278,27 +278,16 @@ namespace TripPlanner.Controllers
             return Ok(result);
         }
         
-        [HttpGet("{id}/route")]
+        [HttpGet]
         public async Task<IActionResult> GetRoute(int id)
         {
             var route = await _routeService.GetRoute(id);
-
+                
             if (route == null)
                 return NotFound();
 
             return Ok(route);
         }
-        
-        /*[HttpGet]
-        public async Task<IActionResult> SearchAttractions(string query)
-        {
-            var results = await _context.Locations
-                .Where(l => l.Name.Contains(query))
-                .Select(l => new { l.Id, l.Name, l.Address })
-                .ToListAsync();
-
-            return Json(results);
-        }*/
         
         [HttpPost]
         public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)

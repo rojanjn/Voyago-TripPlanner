@@ -104,7 +104,7 @@
     </script>
     
     <script>
-        function initMap() {
+        async function initMap() {
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: { lat: 43.6532, lng: -79.3832 }
@@ -117,12 +117,39 @@
                                   })
                               ));
             
+            //Place markers
             locations.forEach(loc => {
                 new google.maps.Marker({
-                    position: loc,
+                    position: { lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) },
                     map: map
                 });
             });
+
+            // Fit map to markers
+            if (locations.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                locations.forEach(loc => bounds.extend({ lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) }));
+                map.fitBounds(bounds);
+            }
+
+            // Fetch and draw route if there are 2+ locations
+            if (locations.length >= 2) {
+                const response = await fetch('/Itinerary/GetRoute?id=@Model.Id');
+                if (response.ok) {
+                    const route = await response.json();
+
+                    // Decode and draw the polyline
+                    const decodedPath = google.maps.geometry.encoding.decodePath(route.polyline);
+                    new google.maps.Polyline({
+                        path: decodedPath,
+                        geodesic: true,
+                        strokeColor: '#4A90D9',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 4,
+                        map: map
+                    });
+                }
+            }
 
             let selectedPlace = null;
             const searchInput = document.getElementById('attractionSearch');
@@ -170,7 +197,7 @@
         }
     </script>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&libraries=places&v=weekly&callback=initMap" 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&libraries=places,geometry&v=weekly&callback=initMap" 
             async defer></script>
     
     <script>
@@ -272,55 +299,5 @@
                 draggedCard = null;
             }
         });
-        @*document.addEventListener('DOMContentLoaded', () => {
-            let selectedLocationId = null;
-
-            const searchInput = document.getElementById('attractionSearch');
-            const searchResults = document.getElementById('searchResults');
-            const btnAdd = document.getElementById('btnAddAttraction');
-
-            searchInput.addEventListener('input', async () => {
-                const query = searchInput.value.trim();
-                if (query.length < 2) {
-                    searchResults.innerHTML = '';
-                    return;
-                }
-
-                const response = await fetch(`/Itinerary/SearchAttractions?query=${encodeURIComponent(query)}`);
-                const locations = await response.json();
-
-                searchResults.innerHTML = '';
-                locations.forEach(loc => {
-                    const div = document.createElement('div');
-                    div.className = 'search-result-item';
-                    div.textContent = `${loc.name} — ${loc.address}`;
-                    div.addEventListener('click', () => {
-                        selectedLocationId = loc.id;
-                        searchInput.value = loc.name;
-                        searchResults.innerHTML = '';
-                        btnAdd.disabled = false;
-                    });
-                    searchResults.appendChild(div);
-                });
-            });
-
-            btnAdd.addEventListener('click', async () => {
-                if (!selectedLocationId) return;
-                
-                await fetch('/Itinerary/AddAttraction', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itineraryId: @Model.Id,
-                        locationId: selectedLocationId
-                    })
-                });
-
-                // Reload the page to show the new attraction
-                location.reload();
-            });
-
-            
-        })*@
     </script>
 }
