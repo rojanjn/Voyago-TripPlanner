@@ -6,205 +6,103 @@
     Layout = "_Layout";
 }
 
-<div class="details-page page-container">
-    
-    <div class="trip-layout">
-    
-        <!-- LEFT: MAP -->
-        <div class="details-map-panel">
-            <div class="attraction-search">
-                <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
-                @*<div id="searchResults" class="search-dropdown"></div>*@
-            </div>
-            
-            <div id="map"></div>
-            <button id="btnAddAttraction" class="btn-add-attraction">Add attraction</button>
-        </div>
-    
-    
-        <!-- RIGHT: TRIP DETAILS -->
-        <div class="trip-panel">
-    
-            <div class="trip-header">
-                <h2>@Model.Title</h2>
-                
-                <div class="trip-country">
-                    @Model.Country?.CountryName
-                </div>
-
-                <div class="trip-description">
-                    @Model.Description
-                </div>
-    
-                <div class="trip-dates">
-                    @Model.StartDate.ToShortDateString()
-                    →
-                    @Model.EndDate.ToShortDateString()
-                </div>
-            </div>
-    
-            <div class="attractions-list">
-    
-                @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
-                {
-                    int stopNumber = 1;
-    
-                    foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
-                    {
-                        <div class="attraction-card" data-item-id="@item.Id">
-                            
-                            <div class="drag-handle">☰</div>
-
-                            <div class="stop-number">
-                                @stopNumber
-                            </div>
-
-                            @*<img src="@item.Location.ImageUrl"
-                                 class="attraction-thumb"/>*@
-
-                            <div class="attraction-info">
-
-                                <div class="attraction-name">
-                                    @item.Location.Name
-                                </div>
-
-                                <div class="attraction-address">
-                                    @item.Location.Address
-                                </div>
-
-                                <div class="travel-info">
-                                    @item.StartDateTime.ToString("t")
-                                    →
-                                    @item.EndDateTime.ToString("t")
-                                </div>
-                            </div>
-
-                            <div class="attraction-actions">
-                                <button class="btn-remove">✕</button>
-                            </div>
-                        </div>
-                        stopNumber++;
-                    }
-                }
-                else
-                {
-                    <p>No attractions added yet.</p>
-                }
-            </div>
-    
-            <a asp-action="Index" class="btn-back">Back</a>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-
     <script>
+        // Make navbar white immediately on Details page
         document.querySelector('.navbar').classList.add('scrolled');
+        
+        // Optional: Remove white bg when scrolled back to top
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
     </script>
     
     <script>
-        async function initMap() {
+        function initMap() {
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: { lat: 43.6532, lng: -79.3832 }
             });
             
             const locations = @Html.Raw(JsonSerializer.Serialize(
-                                  Model.ItineraryItems.Select(i => new {
+                                  Model.ItineraryItems?.Select(i => new {
                                       lat = i.Location.Latitude,
-                                      lng = i.Location.Longitude
-                                  })
+                                      lng = i.Location.Longitude,
+                                      name = i.Location.Name
+                                  }) ?? Enumerable.Empty<object>()
                               ));
             
-            //Place markers
             locations.forEach(loc => {
                 new google.maps.Marker({
-                    position: { lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) },
-                    map: map
+                    position: { lat: loc.lat, lng: loc.lng },
+                    map: map,
+                    title: loc.name
                 });
-            });
-
-            // Fit map to markers
-            if (locations.length > 0) {
-                const bounds = new google.maps.LatLngBounds();
-                locations.forEach(loc => bounds.extend({ lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) }));
-                map.fitBounds(bounds);
-            }
-
-            // Fetch and draw route if there are 2+ locations
-            if (locations.length >= 2) {
-                const response = await fetch('/Itinerary/GetRoute?id=@Model.Id');
-                if (response.ok) {
-                    const route = await response.json();
-
-                    // Decode and draw the polyline
-                    const decodedPath = google.maps.geometry.encoding.decodePath(route.polyline);
-                    new google.maps.Polyline({
-                        path: decodedPath,
-                        geodesic: true,
-                        strokeColor: '#4A90D9',
-                        strokeOpacity: 1.0,
-                        strokeWeight: 4,
-                        map: map
-                    });
-                }
-            }
-
-            let selectedPlace = null;
-            const searchInput = document.getElementById('attractionSearch');
-            const btnAdd = document.getElementById('btnAddAttraction');
-
-            // Initialize Google Places Autocomplete
-            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
-                fields: ['place_id', 'name', 'formatted_address', 'geometry']
-            });
-
-            // When a place is selected from the dropdown
-            autocomplete.addListener('place_changed', () => {
-                const place = autocomplete.getPlace();
-                if (!place.geometry) return;
-
-                selectedPlace = {
-                    placeId: place.place_id,
-                    name: place.name,
-                    address: place.formatted_address,
-                    latitude: place.geometry.location.lat(),
-                    longitude: place.geometry.location.lng()
-                };
-
-                btnAdd.disabled = false;
-            });
-
-            btnAdd.addEventListener('click', async () => {
-                if (!selectedPlace) return;
-
-                await fetch('/Itinerary/AddAttraction', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itineraryId: @Model.Id,
-                        placeId: selectedPlace.placeId,
-                        name: selectedPlace.name,
-                        address: selectedPlace.address,
-                        latitude: selectedPlace.latitude,
-                        longitude: selectedPlace.longitude
-                    })
-                });
-
-                location.reload();
             });
         }
     </script>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&libraries=places,geometry&v=weekly&callback=initMap" 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&callback=initMap" 
             async defer></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            let selectedLocationId = null;
+
+            const searchInput = document.getElementById('attractionSearch');
+            const searchResults = document.getElementById('searchResults');
+            const btnAdd = document.getElementById('btnAddAttraction');
+
+            if (searchInput && searchResults && btnAdd) {
+                searchInput.addEventListener('input', async () => {
+                    const query = searchInput.value.trim();
+                    if (query.length < 2) {
+                        searchResults.innerHTML = '';
+                        return;
+                    }
+
+                    const response = await fetch(`/Itinerary/SearchAttractions?query=${encodeURIComponent(query)}`);
+                    const locations = await response.json();
+
+                    searchResults.innerHTML = '';
+                    locations.forEach(loc => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.textContent = `${loc.name} — ${loc.address}`;
+                        div.addEventListener('click', () => {
+                            selectedLocationId = loc.id;
+                            searchInput.value = loc.name;
+                            searchResults.innerHTML = '';
+                            btnAdd.disabled = false;
+                        });
+                        searchResults.appendChild(div);
+                    });
+                });
+
+                btnAdd.addEventListener('click', async () => {
+                    if (!selectedLocationId) return;
+                    
+                    await fetch('/Itinerary/AddAttraction', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            itineraryId: @Model.Id,
+                            locationId: selectedLocationId
+                        })
+                    });
+
+                    location.reload();
+                });
+            }
+
             document.querySelectorAll('.btn-remove').forEach(btn => {
                 btn.addEventListener('click', async () => {
-                    const card = btn.closest('.attraction-card');
+                    const card = btn.closest('.location-item');
                     const itineraryItemId = card.dataset.itemId;
 
                     await fetch('/Itinerary/RemoveAttraction', {
@@ -216,88 +114,102 @@
                     location.reload();
                 });
             });
-
-            const attractionsList = document.querySelector('.attractions-list');
-            let draggedCard = null;
-            let placeholder = document.createElement('div');
-            placeholder.className = 'drag-placeholder';
-
-            document.querySelectorAll('.attraction-card').forEach(card => {
-                const handle = card.querySelector('.drag-handle');
-
-                handle.addEventListener('mousedown', (e) => {
-                    draggedCard = card;
-                    const rect = card.getBoundingClientRect();
-
-                    card.style.width = rect.width + 'px';
-                    card.style.position = 'fixed';
-                    card.style.top = rect.top + 'px';
-                    card.style.left = rect.left + 'px';
-                    card.style.zIndex = '1000';
-                    card.style.opacity = '0.8';
-                    card.style.pointerEvents = 'none';
-
-                    placeholder.style.height = rect.height + 'px';
-                    card.parentNode.insertBefore(placeholder, card);
-
-                    document.addEventListener('mousemove', onMouseMove);
-                    document.addEventListener('mouseup', onMouseUp);
-                });
-            });
-
-            function onMouseMove(e) {
-                if (!draggedCard) return;
-
-                draggedCard.style.top = e.clientY - draggedCard.offsetHeight / 2 + 'px';
-
-                const cards = [...attractionsList.querySelectorAll('.attraction-card:not(.dragging)')];
-                const closest = cards.reduce((closest, child) => {
-                    const box = child.getBoundingClientRect();
-                    const offset = e.clientY - box.top - box.height / 2;
-                    if (offset < 0 && offset > closest.offset) {
-                        return { offset, element: child };
-                    }
-                    return closest;
-                }, { offset: Number.NEGATIVE_INFINITY }).element;
-
-                if (closest) {
-                    attractionsList.insertBefore(placeholder, closest);
-                } else {
-                    attractionsList.appendChild(placeholder);
-                }
-}
-
-            async function onMouseUp() {
-                if (!draggedCard) return;
-
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-
-                draggedCard.style.position = '';
-                draggedCard.style.top = '';
-                draggedCard.style.left = '';
-                draggedCard.style.width = '';
-                draggedCard.style.zIndex = '';
-                draggedCard.style.opacity = '';
-                draggedCard.style.pointerEvents = '';
-
-                attractionsList.insertBefore(draggedCard, placeholder);
-                placeholder.remove();
-
-                const itemIds = [...attractionsList.querySelectorAll('.attraction-card')]
-                    .map(c => parseInt(c.dataset.itemId));
-
-                await fetch('/Itinerary/ReorderAttractions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        itineraryId: @Model.Id,
-                        itemIds: itemIds
-                    })
-                });
-
-                draggedCard = null;
-            }
         });
     </script>
 }
+
+<div class="details-page">
+    <div class="details-container">
+        
+        <!-- LEFT: MAP PANEL -->
+        <div class="map-panel">
+            <div class="map-search-box">
+                <input type="text" 
+                       id="attractionSearch" 
+                       placeholder="Search attractions..." 
+                       autocomplete="off" />
+                <div id="searchResults" class="search-dropdown"></div>
+            </div>
+            
+            <div id="map" class="map-view"></div>
+            
+            <button id="btnAddAttraction" class="btn-add-location" disabled>
+                Add attraction
+            </button>
+        </div>
+        
+        <!-- RIGHT: TRIP INFO PANEL -->
+        <div class="info-panel">
+            <div class="info-card">
+                
+                <!-- Trip Header -->
+                <div class="info-header">
+                    <h1 class="trip-title-detail">@Model.Title</h1>
+                    <p class="trip-subtitle">@Model.Country?.CountryName</p>
+                </div>
+                
+                <!-- Trip Description -->
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="trip-description-box">
+                        <p>@Model.Description</p>
+                    </div>
+                }
+                
+                <!-- Time Display -->
+                <div class="time-display">
+                    <div class="time-label">Time</div>
+                    <div class="time-value">
+                        @Model.StartDate.ToString("MMM dd, yyyy") 
+                        → 
+                        @Model.EndDate.ToString("MMM dd, yyyy")
+                    </div>
+                </div>
+                
+                <!-- Locations List -->
+                <div class="locations-section">
+                    <h3 class="section-title">Location</h3>
+                    
+                    @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
+                    {
+                        <div class="locations-list">
+                            @foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
+                            {
+                                <div class="location-item" data-item-id="@item.Id">
+                                    <div class="location-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                    </div>
+                                    
+                                    <div class="location-details">
+                                        <div class="location-name">@item.Location.Name</div>
+                                        <div class="location-time">
+                                            @item.StartDateTime.ToString("h:mm tt") - @item.EndDateTime.ToString("h:mm tt")
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn-remove" title="Remove">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="empty-state">No attractions added yet.</p>
+                    }
+                </div>
+                
+                <!-- Back Button -->
+                <a asp-action="Index" class="btn-back-detail">Back to Trips</a>
+            </div>
+        </div>
+        
+    </div>
+</div>
