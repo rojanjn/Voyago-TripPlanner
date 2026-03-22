@@ -24,7 +24,7 @@ public class GooglePlacesService
         
         var encodedQuery = Uri.EscapeDataString(query);
 
-        var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query={encodedQuery}&key={apiKey}";
+        var url = $"https://maps.googleapis.com/maps/api/place/textsearch/json?query={encodedQuery}&key={apikey}";
         
         var response = await _httpClient.GetAsync(url);
 
