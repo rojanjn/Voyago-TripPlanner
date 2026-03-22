@@ -120,6 +120,107 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                     Address = "Tuojiang Town, Fenghuang County, Xiangxi Tujia and Miao Autonomous Prefecture of Hunan Province",
                     Latitude = 27.952822m, 
                     Longitude = 109.600989m
+                },
+                  new Location { 
+                    Id = 5,
+                    Name = "Casa Loma",
+                    Address = "1 Austin Terrace, Toronto, ON M5R 1X8",
+                    Latitude = 43.6781015m,
+                    Longitude = -79.4094159m
+                },
+
+                new Location { 
+                    Id = 6,
+                    Name = "Rogers Centre",
+                    Address = "1 Blue Jays Way, Toronto, ON M5V 1J4",
+                    Latitude = 43.6416598m,
+                    Longitude = -79.3891976m
+                },
+
+                new Location { 
+                    Id = 7,
+                    Name = "George Brown Polytechnic - Casa Loma Campus",
+                    Address = "160 Kendal Ave, Toronto, ON M5R 1M3",
+                    Latitude = 43.675865m,
+                    Longitude = -79.4109118m
+                },
+                new Location { 
+                    Id = 8,
+                    Name = "George Brown Polytechnic - St. James Campus",
+                    Address = "200 King St E, Toronto, ON M5A 3W8",
+                    Latitude = 43.6514195m,
+                    Longitude = -79.3708678m
+                },
+                new Location { 
+                    Id = 9,
+                    Name = "George Brown Polytechnic- Waterfront Campus",
+                    Address = "51 Dockside Dr, Toronto, ON M5A 0B6",
+                    Latitude = 43.6441155m,
+                    Longitude = -79.3656226m
+                },
+
+                new Location { 
+                    Id = 10,
+                    Name = "Royal Ontario Museum",
+                    Address = "100 Queens Park, Toronto, ON M5S 2C6",
+                    Latitude = 43.6657043m,
+                    Longitude = -79.3939679m
+                },
+
+                new Location { 
+                    Id = 11,
+                    Name = "Art Gallery of Ontario",
+                    Address = "317 Dundas St W, Toronto, ON M5T 1G4",
+                    Latitude = 43.6536066m,
+                    Longitude = -79.3925123m
+                },
+
+                new Location { 
+                    Id = 12,
+                    Name = "Ripley's Aquarium of Canada",
+                    Address = "288 Bremner Blvd, Toronto, ON M5V 3L9",
+                    Latitude = 43.6424036m,
+                    Longitude = -79.3868690m
+                },
+
+                new Location { 
+                    Id = 13,
+                    Name = "Niagara Falls (Horseshoe Falls)",
+                    Address = "6650 Niagara Pkwy, Niagara Falls, ON L2G 0L0",
+                    Latitude = 43.0799120m,
+                    Longitude = -79.0746950m
+                },
+
+                new Location { 
+                    Id = 14,
+                    Name = "Parliament Hill",
+                    Address = "111 Wellington St, Ottawa, ON K1A 0A9",
+                    Latitude = 45.4235937m,
+                    Longitude = -75.7009290m
+                },
+
+                new Location { 
+                    Id = 15,
+                    Name = "Old Quebec (Vieux-Québec)",
+                    Address = "Old Quebec, Quebec City, QC G1R",
+                    Latitude = 46.8138783m,
+                    Longitude = -71.2079809m
+                },
+
+                new Location { 
+                    Id = 16,
+                    Name = "Stanley Park",
+                    Address = "Vancouver, BC V6G 1Z4",
+                    Latitude = 49.3043010m,
+                    Longitude = -123.1443000m
+                },
+
+                new Location { 
+                    Id = 17,
+                    Name = "Banff National Park",
+                    Address = "Banff, AB T1L 1K2",
+                    Latitude = 51.4968460m,
+                    Longitude = -115.9280560m
                 }
             );
         
