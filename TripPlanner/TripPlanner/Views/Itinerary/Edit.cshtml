@@ -1,54 +1,56 @@
 @model Itinerary
 
 @{
-    ViewData["Title"]="Edit Itinerary";
+    ViewData["Title"] = "Edit Itinerary";
 }
 
-@section Scripts {
-    <script>
-        document.querySelector('.navbar').classList.add('scrolled');
-    </script>
-}
+<div class="itinerary-page">
+    <div class="itinerary-page-inner">
 
-<div class="page-container">
-    <h2 class="page-title">Edit Your Trip</h2>
+        <div class="form-card">
+            <h2 class="form-card-title">Edit Your Trip</h2>
 
-    <form asp-action="Edit" method="post">
-        <!--- Hidden field including Id in form submission, linking data to the correct record in the database. --->
-        @Html.HiddenFor(model => model.Id)
-        
-        <div class="modal-card">
-            <input asp-for="Title" placeholder="Trip Title" />
-            <span asp-validation-for="Title" class="text-danger"></span> 
-            
-            <div class="modal-header">
-                <h3>Where are you going?</h3>
-            </div>
-            
-            <select asp-for="CountryId" class="modal-input">
-                <option value="Select a Destination..."></option>
-                @foreach (var country in ViewBag.Countries)
-                {
-                    <option value="@country.CountryId">@country.CountryName</option>
-                }
-            </select>
-            <input asp-for="Description" placeholder="Description"/>
-            
-            <div class="dates-section">
-                <label class="dates-label">Add Dates <span class="optional">(Optional)</span></label>
-                <div class="dates-row">
-                    <input asp-for="StartDate" class="date-input" placeholder="Start" />
+            <form asp-action="Edit" method="post">
+                @Html.HiddenFor(model => model.Id)
+
+                <div class="form-field">
+                    <label class="form-label">Trip Title</label>
+                    <input asp-for="Title" class="form-input" placeholder="Trip Title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">Where are you going?</label>
+                    <select asp-for="CountryId" class="form-input">
+                        <option value="">Select a Destination...</option>
+                        @foreach (var country in ViewBag.Countries)
+                        {
+                            <option value="@country.CountryId">@country.CountryName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">Description <span class="optional">(Optional)</span></label>
+                    <input asp-for="Description" class="form-input" placeholder="Description" />
+                </div>
+
+                <div class="form-field">
+                    <label class="form-label">Dates <span class="optional">(Optional)</span></label>
+                    <div class="dates-row">
+                        <input asp-for="StartDate" class="form-input date-input" />
+                        <input asp-for="EndDate" class="form-input date-input" />
+                    </div>
                     <span asp-validation-for="StartDate" class="text-danger"></span>
-                    
-                    <input asp-for="EndDate" class="date-input" placeholder="End" />
                     <span asp-validation-for="EndDate" class="text-danger"></span>
                 </div>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn-create">Create</button>
-                <a asp-action="Index" class="btn-cancel">Cancel</a>
-            </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Save Changes</button>
+                    <a asp-action="Index" class="btn-cancel-white">Cancel</a>
+                </div>
+            </form>
         </div>
-    </form>
+
+    </div>
 </div>
