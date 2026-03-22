@@ -58,6 +58,8 @@ app.MapControllerRoute(
 app.MapRazorPages()
     .WithStaticAssets();
 
+
+
 // ---------------------------------------------------
 // ROLE + ADMIN SEEDING
 // This section is responsible for initializing default roles and creating an initial admin user
@@ -66,11 +68,14 @@ app.MapRazorPages()
 // ---------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+    
     // Retrieve RoleManager and UserManager services from the service provider.
     // These services are essential for interacting with the Identity system for roles and users.
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
 
     // Define the application's roles. These roles will be created if they don't already exist.
     string[] roles = { "Admin", "User" };
