@@ -26,6 +26,7 @@ namespace TripPlanner.Controllers
         }
 
         // GET: Itinerary/Index
+        // Shows a list of all your itineraries
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -48,7 +49,8 @@ namespace TripPlanner.Controllers
                 .ToListAsync());
         }
 
-        // GET: Itinerary/Details/5
+        // GET: Itinerary/Details/{id}
+        // Shows a single itinerary page with all its items and locations included
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -73,6 +75,8 @@ namespace TripPlanner.Controllers
         }
 
         // GET: Itinerary/Create
+        // Shows the create form
+        // Passes list of countries to the form via ViewBag.Countries
         [HttpGet]
         public IActionResult Create()
         {
@@ -83,6 +87,8 @@ namespace TripPlanner.Controllers
         }
 
         // POST: Itinerary/Create
+        // Saves the new itinerary to the database
+        // Automatically assigns UserId to the current logged-in user
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Itinerary itinerary)
@@ -103,7 +109,9 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // GET: Itinerary/Edit/5
+        // GET: Itinerary/Edit/{id}
+        // Shows the edit form pre-filled with existing data
+        // Also passes countries list for the dropdown
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -124,7 +132,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // POST: Itinerary/Edit/5
+        // POST: Itinerary/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Itinerary itinerary)
@@ -179,7 +187,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // GET: Itinerary/Delete/5
+        // GET: Itinerary/Delete/{id}
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -201,7 +209,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // POST: Itinerary/Delete/5
+        // POST: Itinerary/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -225,6 +233,7 @@ namespace TripPlanner.Controllers
         
         
         // GET: Itinerary/{id}/DetailsWithItems
+        // Returns full itinerary data as JSON including all items and their locations
         [HttpGet("{id}/details")]
         public async Task<IActionResult> GetDetails(int id)
         {
@@ -278,6 +287,8 @@ namespace TripPlanner.Controllers
             return Ok(result);
         }
         
+        // GET /Itinerary/{id}/route
+        // Calls RouteService to calculate the full route between all stops
         [HttpGet("{id}/route")]
         public async Task<IActionResult> GetRoute(int id)
         {
@@ -289,6 +300,8 @@ namespace TripPlanner.Controllers
             return Ok(route);
         }
         
+        // GET /Itinerary/SearchAttractions?query=
+        // Searches locations already in your database by name
         [HttpGet]
         public async Task<IActionResult> SearchAttractions(string query)
         {
@@ -298,59 +311,6 @@ namespace TripPlanner.Controllers
                 .ToListAsync();
 
             return Json(results);
-        }
-        
-        [HttpPost]
-        public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)
-        {
-            var itinerary = await _context.Itineraries.FindAsync(dto.ItineraryId);
-            if (itinerary == null) return NotFound();
-
-            // Ownership check to match your existing pattern
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (itinerary.UserId != userId) return Forbid();
-            }
-
-            var nextStopOrder = await _context.ItineraryItems
-                .Where(i => i.ItineraryId == dto.ItineraryId)
-                .MaxAsync(i => (int?)i.StopOrder) ?? 0;
-
-            var item = new ItineraryItem
-            {
-                ItineraryId = dto.ItineraryId,
-                LocationId = dto.LocationId,
-                StopOrder = nextStopOrder + 1,
-                StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc),
-                EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc)
-            };
-
-            _context.ItineraryItems.Add(item);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-        
-        [HttpPost]
-        public async Task<IActionResult> RemoveAttraction([FromBody] RemoveAttractionDto dto)
-        {
-            var item = await _context.ItineraryItems.FindAsync(dto.ItineraryItemId);
-            if (item == null) return NotFound();
-            
-            // Ownership check
-            var itinerary = await _context.Itineraries.FindAsync(item.ItineraryId);
-            if (itinerary == null) return NotFound();
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (itinerary.UserId != userId) return Forbid();
-            }
-
-            _context.ItineraryItems.Remove(item);
-            await _context.SaveChangesAsync();
-
-            return Ok();
         }
     }
 }

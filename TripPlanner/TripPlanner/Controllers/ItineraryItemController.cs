@@ -55,6 +55,7 @@ public class ItineraryItemController : ControllerBase
     
     
     // Read Items (GET)
+    // Returns all items in a specific itinerary
     [HttpGet]
     public async Task<IActionResult> GetItems(int itineraryId)
     {
@@ -84,6 +85,8 @@ public class ItineraryItemController : ControllerBase
     
     
     // Create Item (POST) /itineraries/{itineraryId}/items
+    // Verifies the LocationId actually exists in your database first
+    // Saves the item and returns it with the location name included
     [HttpPost]
     public async Task<IActionResult> CreateItem(int itineraryId,
         CreateItineraryItemDto dto)
@@ -124,6 +127,8 @@ public class ItineraryItemController : ControllerBase
     
     
     // Update Item (PUT)
+    // Updates an existing stop (time, order, note, location)
+    // Checks both that the itinerary belongs to you AND the item belongs to that itinerary
     [HttpPut("{itemId:int}")]
     public async Task<IActionResult> UpdateItem(
         int itineraryId,
