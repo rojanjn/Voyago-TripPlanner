@@ -26,6 +26,7 @@ namespace TripPlanner.Controllers
         }
 
         // GET: Itinerary/Index
+        // Shows a list of all your itineraries
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -48,7 +49,8 @@ namespace TripPlanner.Controllers
                 .ToListAsync());
         }
 
-        // GET: Itinerary/Details/5
+        // GET: Itinerary/Details/{id}
+        // Shows a single itinerary page with all its items and locations included
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -73,6 +75,8 @@ namespace TripPlanner.Controllers
         }
 
         // GET: Itinerary/Create
+        // Shows the create form
+        // Passes list of countries to the form via ViewBag.Countries
         [HttpGet]
         public IActionResult Create()
         {
@@ -83,6 +87,8 @@ namespace TripPlanner.Controllers
         }
 
         // POST: Itinerary/Create
+        // Saves the new itinerary to the database
+        // Automatically assigns UserId to the current logged-in user
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Itinerary itinerary)
@@ -103,7 +109,9 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // GET: Itinerary/Edit/5
+        // GET: Itinerary/Edit/{id}
+        // Shows the edit form pre-filled with existing data
+        // Also passes countries list for the dropdown
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -124,7 +132,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // POST: Itinerary/Edit/5
+        // POST: Itinerary/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Itinerary itinerary)
@@ -179,7 +187,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // GET: Itinerary/Delete/5
+        // GET: Itinerary/Delete/{id}
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -201,7 +209,7 @@ namespace TripPlanner.Controllers
             return View(itinerary);
         }
 
-        // POST: Itinerary/Delete/5
+        // POST: Itinerary/Delete/{id}
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -225,6 +233,7 @@ namespace TripPlanner.Controllers
         
         
         // GET: Itinerary/{id}/DetailsWithItems
+        // Returns full itinerary data as JSON including all items and their locations
         [HttpGet("{id}/details")]
         public async Task<IActionResult> GetDetails(int id)
         {
@@ -278,7 +287,9 @@ namespace TripPlanner.Controllers
             return Ok(result);
         }
         
-        [HttpGet]
+        // GET /Itinerary/{id}/route
+        // Calls RouteService to calculate the full route between all stops
+        [HttpGet("{id}/route")]
         public async Task<IActionResult> GetRoute(int id)
         {
             var route = await _routeService.GetRoute(id);
@@ -289,6 +300,20 @@ namespace TripPlanner.Controllers
             return Ok(route);
         }
         
+        // GET /Itinerary/SearchAttractions?query=
+        // Searches locations already in your database by name
+        [HttpGet]
+        public async Task<IActionResult> SearchAttractions(string query)
+        {
+            var results = await _context.Locations
+                .Where(l => l.Name.Contains(query))
+                .Select(l => new { l.Id, l.Name, l.Address })
+                .ToListAsync();
+
+            return Json(results);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)
         {

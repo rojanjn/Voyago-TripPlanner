@@ -24,6 +24,7 @@ public class LocationController : ControllerBase
         
         
     // Get /locations
+    // Returns all locations currently saved in the DB
     [HttpGet]
     public async Task<IActionResult> GetAll()
     { 
@@ -43,6 +44,7 @@ public class LocationController : ControllerBase
         
         
     // Get  /locations/{id}
+    // Returns a single location by its DB ID (To view its details or update the location info)
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
@@ -64,6 +66,7 @@ public class LocationController : ControllerBase
         
         
     // POST /locations
+    // Saves a new location, which is originates from Google, into your database
     [HttpPost]
     public async Task<IActionResult> Create(CreateLocationDto dto)
     {
@@ -95,6 +98,7 @@ public class LocationController : ControllerBase
     
         
     // PUT /locations/{id}
+    // Updates an existing location's details
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateLocationDto dto)
     {
