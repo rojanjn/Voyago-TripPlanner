@@ -5,6 +5,11 @@ window.addEventListener('scroll', function () {
     const navbar = document.querySelector('.navbar');
     const hero = document.querySelector('.hero');
 
+    // feature: if we're on an inner page (no hero), don't touch the navbar
+    // because those pages force .scrolled via inline script
+    const isInnerPage = document.querySelector('.itinerary-page, .admin-dashboard, .page-container');
+    if (isInnerPage) return;
+
     if (window.scrollY > 10) {
         navbar.classList.add('scrolled');
     } else {
@@ -27,10 +32,8 @@ window.addEventListener('scroll', function () {
 function showTab(tabId) {
     let tabs = document.querySelectorAll(".tab-content");
     let buttons = document.querySelectorAll(".tab");
-
     tabs.forEach(t => t.classList.remove("active"));
     buttons.forEach(b => b.classList.remove("active"));
-
     document.getElementById(tabId).classList.add("active");
     event.target.classList.add("active");
 }
