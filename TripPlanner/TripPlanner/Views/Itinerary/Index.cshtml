@@ -75,6 +75,15 @@
                                     <div class="card-country">@item.Country.CountryName</div>
                                 }
                             </div>
+                            <!-- Feature: Able to edit and delete past itineraries -->
+                            <div class="card-actions">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="card-btn edit-btn"
+                                   onclick="event.stopPropagation();">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="card-btn delete-btn"
+                                   onclick="event.stopPropagation();">Delete</a>
+                            </div>
                         </div>
                         <div class="card-dates">
                             @item.StartDate.ToShortDateString() → @item.EndDate.ToShortDateString()
@@ -86,13 +95,6 @@
                     </div>
                 }
             </div>
-            <!-- feature: pagination controls for past tab -->
-            <div class="pagination-controls" id="past-pagination">
-                <button class="page-arrow" id="past-prev" onclick="changePage('past', -1)">&#8592;</button>
-                <span class="page-indicator" id="past-indicator"></span>
-                <button class="page-arrow" id="past-next" onclick="changePage('past', 1)">&#8594;</button>
-            </div>
-        </div>
 
     </div>
 </div>
