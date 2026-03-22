@@ -1497,6 +1497,15 @@ body.admin-page {
         border-color: var(--blue);
         background: white;
     }
+/* Dragging */
+.drag-placeholder {
+    background: #f0f0f0;
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+/* Stop number */
 
 .optional {
     color: var(--muted);

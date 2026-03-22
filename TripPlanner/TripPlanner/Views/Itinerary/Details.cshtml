@@ -14,7 +14,7 @@
         <div class="details-map-panel">
             <div class="attraction-search">
                 <input type="text" id="attractionSearch" placeholder="Search attractions..." autocomplete="off" />
-                <div id="searchResults" class="search-dropdown"></div>
+                @*<div id="searchResults" class="search-dropdown"></div>*@
             </div>
             
             <div id="map"></div>
@@ -52,31 +52,33 @@
                     foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
                     {
                         <div class="attraction-card" data-item-id="@item.Id">
-    
+                            
+                            <div class="drag-handle">☰</div>
+
                             <div class="stop-number">
                                 @stopNumber
                             </div>
-    
+
                             @*<img src="@item.Location.ImageUrl"
                                  class="attraction-thumb"/>*@
-    
+
                             <div class="attraction-info">
-    
+
                                 <div class="attraction-name">
                                     @item.Location.Name
                                 </div>
-    
+
                                 <div class="attraction-address">
                                     @item.Location.Address
                                 </div>
-    
+
                                 <div class="travel-info">
                                     @item.StartDateTime.ToString("t")
                                     →
                                     @item.EndDateTime.ToString("t")
                                 </div>
                             </div>
-    
+
                             <div class="attraction-actions">
                                 <button class="btn-remove">✕</button>
                             </div>
@@ -102,7 +104,7 @@
     </script>
     
     <script>
-        function initMap() {
+        async function initMap() {
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 10,
                 center: { lat: 43.6532, lng: -79.3832 }
@@ -115,67 +117,91 @@
                                   })
                               ));
             
+            //Place markers
             locations.forEach(loc => {
                 new google.maps.Marker({
-                    position: loc,
+                    position: { lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) },
                     map: map
                 });
             });
-        }
-    </script>
-    
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&callback=initMap" 
-            async defer></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let selectedLocationId = null;
 
+            // Fit map to markers
+            if (locations.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                locations.forEach(loc => bounds.extend({ lat: parseFloat(loc.lat), lng: parseFloat(loc.lng) }));
+                map.fitBounds(bounds);
+            }
+
+            // Fetch and draw route if there are 2+ locations
+            if (locations.length >= 2) {
+                const response = await fetch('/Itinerary/GetRoute?id=@Model.Id');
+                if (response.ok) {
+                    const route = await response.json();
+
+                    // Decode and draw the polyline
+                    const decodedPath = google.maps.geometry.encoding.decodePath(route.polyline);
+                    new google.maps.Polyline({
+                        path: decodedPath,
+                        geodesic: true,
+                        strokeColor: '#4A90D9',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 4,
+                        map: map
+                    });
+                }
+            }
+
+            let selectedPlace = null;
             const searchInput = document.getElementById('attractionSearch');
-            const searchResults = document.getElementById('searchResults');
             const btnAdd = document.getElementById('btnAddAttraction');
 
-            searchInput.addEventListener('input', async () => {
-                const query = searchInput.value.trim();
-                if (query.length < 2) {
-                    searchResults.innerHTML = '';
-                    return;
-                }
+            // Initialize Google Places Autocomplete
+            const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+                fields: ['place_id', 'name', 'formatted_address', 'geometry']
+            });
 
-                const response = await fetch(`/Itinerary/SearchAttractions?query=${encodeURIComponent(query)}`);
-                const locations = await response.json();
+            // When a place is selected from the dropdown
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) return;
 
-                searchResults.innerHTML = '';
-                locations.forEach(loc => {
-                    const div = document.createElement('div');
-                    div.className = 'search-result-item';
-                    div.textContent = `${loc.name} — ${loc.address}`;
-                    div.addEventListener('click', () => {
-                        selectedLocationId = loc.id;
-                        searchInput.value = loc.name;
-                        searchResults.innerHTML = '';
-                        btnAdd.disabled = false;
-                    });
-                    searchResults.appendChild(div);
-                });
+                selectedPlace = {
+                    placeId: place.place_id,
+                    name: place.name,
+                    address: place.formatted_address,
+                    latitude: place.geometry.location.lat(),
+                    longitude: place.geometry.location.lng()
+                };
+
+                btnAdd.disabled = false;
             });
 
             btnAdd.addEventListener('click', async () => {
-                if (!selectedLocationId) return;
-                
+                if (!selectedPlace) return;
+
                 await fetch('/Itinerary/AddAttraction', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         itineraryId: @Model.Id,
-                        locationId: selectedLocationId
+                        placeId: selectedPlace.placeId,
+                        name: selectedPlace.name,
+                        address: selectedPlace.address,
+                        latitude: selectedPlace.latitude,
+                        longitude: selectedPlace.longitude
                     })
                 });
 
-                // Reload the page to show the new attraction
                 location.reload();
             });
-
+        }
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-5werSTqBxXCNPkyI398eQyVgm3svpEg&libraries=places,geometry&v=weekly&callback=initMap" 
+            async defer></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.btn-remove').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const card = btn.closest('.attraction-card');
@@ -190,6 +216,88 @@
                     location.reload();
                 });
             });
-        })
+
+            const attractionsList = document.querySelector('.attractions-list');
+            let draggedCard = null;
+            let placeholder = document.createElement('div');
+            placeholder.className = 'drag-placeholder';
+
+            document.querySelectorAll('.attraction-card').forEach(card => {
+                const handle = card.querySelector('.drag-handle');
+
+                handle.addEventListener('mousedown', (e) => {
+                    draggedCard = card;
+                    const rect = card.getBoundingClientRect();
+
+                    card.style.width = rect.width + 'px';
+                    card.style.position = 'fixed';
+                    card.style.top = rect.top + 'px';
+                    card.style.left = rect.left + 'px';
+                    card.style.zIndex = '1000';
+                    card.style.opacity = '0.8';
+                    card.style.pointerEvents = 'none';
+
+                    placeholder.style.height = rect.height + 'px';
+                    card.parentNode.insertBefore(placeholder, card);
+
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                });
+            });
+
+            function onMouseMove(e) {
+                if (!draggedCard) return;
+
+                draggedCard.style.top = e.clientY - draggedCard.offsetHeight / 2 + 'px';
+
+                const cards = [...attractionsList.querySelectorAll('.attraction-card:not(.dragging)')];
+                const closest = cards.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = e.clientY - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset, element: child };
+                    }
+                    return closest;
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+
+                if (closest) {
+                    attractionsList.insertBefore(placeholder, closest);
+                } else {
+                    attractionsList.appendChild(placeholder);
+                }
+}
+
+            async function onMouseUp() {
+                if (!draggedCard) return;
+
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+
+                draggedCard.style.position = '';
+                draggedCard.style.top = '';
+                draggedCard.style.left = '';
+                draggedCard.style.width = '';
+                draggedCard.style.zIndex = '';
+                draggedCard.style.opacity = '';
+                draggedCard.style.pointerEvents = '';
+
+                attractionsList.insertBefore(draggedCard, placeholder);
+                placeholder.remove();
+
+                const itemIds = [...attractionsList.querySelectorAll('.attraction-card')]
+                    .map(c => parseInt(c.dataset.itemId));
+
+                await fetch('/Itinerary/ReorderAttractions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        itineraryId: @Model.Id,
+                        itemIds: itemIds
+                    })
+                });
+
+                draggedCard = null;
+            }
+        });
     </script>
 }
