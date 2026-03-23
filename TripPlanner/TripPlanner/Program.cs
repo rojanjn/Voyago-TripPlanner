@@ -37,6 +37,9 @@ using (var scope = app.Services.CreateScope())
     
     try
     {
+        // Log the actual connection string being used
+        logger.LogInformation("Connection string: {cs}", 
+            db.Database.GetConnectionString());
         logger.LogInformation("Starting database migration...");
         db.Database.Migrate();
         logger.LogInformation("Database migration completed successfully.");
