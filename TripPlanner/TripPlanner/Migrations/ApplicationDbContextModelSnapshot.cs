@@ -408,6 +408,110 @@ namespace TripPlanner.Migrations
                             Latitude = 27.952822m,
                             Longitude = 109.600989m,
                             Name = "Fenghuang Ancient City"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Address = "1 Austin Terrace, Toronto, ON M5R 1X8",
+                            Latitude = 43.6781015m,
+                            Longitude = -79.4094159m,
+                            Name = "Casa Loma"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Address = "1 Blue Jays Way, Toronto, ON M5V 1J4",
+                            Latitude = 43.6416598m,
+                            Longitude = -79.3891976m,
+                            Name = "Rogers Centre"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Address = "160 Kendal Ave, Toronto, ON M5R 1M3",
+                            Latitude = 43.675865m,
+                            Longitude = -79.4109118m,
+                            Name = "George Brown Polytechnic - Casa Loma Campus"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Address = "200 King St E, Toronto, ON M5A 3W8",
+                            Latitude = 43.6514195m,
+                            Longitude = -79.3708678m,
+                            Name = "George Brown Polytechnic - St. James Campus"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Address = "51 Dockside Dr, Toronto, ON M5A 0B6",
+                            Latitude = 43.6441155m,
+                            Longitude = -79.3656226m,
+                            Name = "George Brown Polytechnic- Waterfront Campus"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Address = "100 Queens Park, Toronto, ON M5S 2C6",
+                            Latitude = 43.6657043m,
+                            Longitude = -79.3939679m,
+                            Name = "Royal Ontario Museum"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Address = "317 Dundas St W, Toronto, ON M5T 1G4",
+                            Latitude = 43.6536066m,
+                            Longitude = -79.3925123m,
+                            Name = "Art Gallery of Ontario"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Address = "288 Bremner Blvd, Toronto, ON M5V 3L9",
+                            Latitude = 43.6424036m,
+                            Longitude = -79.3868690m,
+                            Name = "Ripley's Aquarium of Canada"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Address = "6650 Niagara Pkwy, Niagara Falls, ON L2G 0L0",
+                            Latitude = 43.0799120m,
+                            Longitude = -79.0746950m,
+                            Name = "Niagara Falls (Horseshoe Falls)"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Address = "111 Wellington St, Ottawa, ON K1A 0A9",
+                            Latitude = 45.4235937m,
+                            Longitude = -75.7009290m,
+                            Name = "Parliament Hill"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Address = "Old Quebec, Quebec City, QC G1R",
+                            Latitude = 46.8138783m,
+                            Longitude = -71.2079809m,
+                            Name = "Old Quebec (Vieux-Québec)"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Address = "Vancouver, BC V6G 1Z4",
+                            Latitude = 49.3043010m,
+                            Longitude = -123.1443000m,
+                            Name = "Stanley Park"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Address = "Banff, AB T1L 1K2",
+                            Latitude = 51.4968460m,
+                            Longitude = -115.9280560m,
+                            Name = "Banff National Park"
                         });
                 });
 
