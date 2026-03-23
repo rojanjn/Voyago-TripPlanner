@@ -6,6 +6,101 @@
     Layout = "_Layout";
 }
 
+<div class="details-page">
+    <div class="details-container">
+        
+        <!-- LEFT: MAP PANEL -->
+        <div class="map-panel">
+            <div class="map-search-box">
+                <input type="text" 
+                       id="attractionSearch" 
+                       placeholder="Search attractions..." 
+                       autocomplete="off" />
+                <div id="searchResults" class="search-dropdown"></div>
+            </div>
+            
+            <div id="map" class="map-view"></div>
+            
+            <button id="btnAddAttraction" class="btn-add-location" disabled>
+                Add attraction
+            </button>
+        </div>
+        
+        <!-- RIGHT: TRIP INFO PANEL -->
+        <div class="info-panel">
+            <div class="info-card">
+                
+                <!-- Trip Header -->
+                <div class="info-header">
+                    <h1 class="trip-title-detail">@Model.Title</h1>
+                    <p class="trip-subtitle">@Model.Country?.CountryName</p>
+                </div>
+                
+                <!-- Trip Description -->
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="trip-description-box">
+                        <p>@Model.Description</p>
+                    </div>
+                }
+                
+                <!-- Time Display -->
+                <div class="time-display">
+                    <div class="time-label">Time</div>
+                    <div class="time-value">
+                        @Model.StartDate.ToString("MMM dd, yyyy") 
+                        → 
+                        @Model.EndDate.ToString("MMM dd, yyyy")
+                    </div>
+                </div>
+                
+                <!-- Locations List -->
+                <div class="locations-section">
+                    <h3 class="section-title">Location</h3>
+                    
+                    @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
+                    {
+                        <div class="locations-list">
+                            @foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
+                            {
+                                <div class="location-item" data-item-id="@item.Id">
+                                    <div class="location-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                    </div>
+                                    
+                                    <div class="location-details">
+                                        <div class="location-name">@item.Location.Name</div>
+                                        <div class="location-time">
+                                            @item.StartDateTime.ToString("h:mm tt") - @item.EndDateTime.ToString("h:mm tt")
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn-remove" title="Remove">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="empty-state">No attractions added yet.</p>
+                    }
+                </div>
+                
+                <!-- Back Button -->
+                <a asp-action="Index" class="btn-back-detail">Back to Trips</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         // Make navbar white immediately on Details page
@@ -117,99 +212,3 @@
         });
     </script>
 }
-
-<div class="details-page">
-    <div class="details-container">
-        
-        <!-- LEFT: MAP PANEL -->
-        <div class="map-panel">
-            <div class="map-search-box">
-                <input type="text" 
-                       id="attractionSearch" 
-                       placeholder="Search attractions..." 
-                       autocomplete="off" />
-                <div id="searchResults" class="search-dropdown"></div>
-            </div>
-            
-            <div id="map" class="map-view"></div>
-            
-            <button id="btnAddAttraction" class="btn-add-location" disabled>
-                Add attraction
-            </button>
-        </div>
-        
-        <!-- RIGHT: TRIP INFO PANEL -->
-        <div class="info-panel">
-            <div class="info-card">
-                
-                <!-- Trip Header -->
-                <div class="info-header">
-                    <h1 class="trip-title-detail">@Model.Title</h1>
-                    <p class="trip-subtitle">@Model.Country?.CountryName</p>
-                </div>
-                
-                <!-- Trip Description -->
-                @if (!string.IsNullOrWhiteSpace(Model.Description))
-                {
-                    <div class="trip-description-box">
-                        <p>@Model.Description</p>
-                    </div>
-                }
-                
-                <!-- Time Display -->
-                <div class="time-display">
-                    <div class="time-label">Time</div>
-                    <div class="time-value">
-                        @Model.StartDate.ToString("MMM dd, yyyy") 
-                        → 
-                        @Model.EndDate.ToString("MMM dd, yyyy")
-                    </div>
-                </div>
-                
-                <!-- Locations List -->
-                <div class="locations-section">
-                    <h3 class="section-title">Location</h3>
-                    
-                    @if (Model.ItineraryItems != null && Model.ItineraryItems.Any())
-                    {
-                        <div class="locations-list">
-                            @foreach (var item in Model.ItineraryItems.OrderBy(i => i.StopOrder))
-                            {
-                                <div class="location-item" data-item-id="@item.Id">
-                                    <div class="location-icon">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                            <circle cx="12" cy="10" r="3"></circle>
-                                        </svg>
-                                    </div>
-                                    
-                                    <div class="location-details">
-                                        <div class="location-name">@item.Location.Name</div>
-                                        <div class="location-time">
-                                            @item.StartDateTime.ToString("h:mm tt") - @item.EndDateTime.ToString("h:mm tt")
-                                        </div>
-                                    </div>
-                                    
-                                    <button class="btn-remove" title="Remove">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="empty-state">No attractions added yet.</p>
-                    }
-                </div>
-                
-                <!-- Back Button -->
-                <a asp-action="Index" class="btn-back-detail">Back to Trips</a>
-            </div>
-        </div>
-        
-    </div>
-</div>
