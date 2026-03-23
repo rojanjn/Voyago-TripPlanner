@@ -7,6 +7,12 @@
 <!-- This script makes sure start-date is not before end-date -->
 @section Scripts {
     <script>
+        // Make navbar white immediately on Details page
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+
+
+    <script>
         // Date validation
         const startDate = document.querySelector('input[name="StartDate"]');
         const endDate = document.querySelector('input[name="EndDate"]');
