@@ -37,12 +37,21 @@ using (var scope = app.Services.CreateScope())
     
     try
     {
-        // Log the actual connection string being used
-        logger.LogInformation("Connection string: {cs}", 
-            db.Database.GetConnectionString());
-        logger.LogInformation("Starting database migration...");
+        logger.LogInformation("Connection string: {cs}", db.Database.GetConnectionString());
+        logger.LogInformation("Database provider: {provider}", db.Database.ProviderName);
+        logger.LogInformation("Pending migrations: {migrations}", 
+            string.Join(", ", db.Database.GetPendingMigrations()));
+        logger.LogInformation("Applied migrations: {migrations}", 
+            string.Join(", ", db.Database.GetAppliedMigrations()));
+        
         db.Database.Migrate();
-        logger.LogInformation("Database migration completed successfully.");
+        
+        logger.LogInformation("Migration done. Tables now in DB:");
+        var tables = db.Database
+            .SqlQueryRaw<string>("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+            .ToList();
+        foreach (var table in tables)
+            logger.LogInformation("  Table: {table}", table);
     }
     catch (Exception ex)
     {
