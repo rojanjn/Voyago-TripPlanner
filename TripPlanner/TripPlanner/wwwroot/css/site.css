@@ -911,10 +911,11 @@ textarea {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: none;
     backdrop-filter: blur(8px);
     cursor: pointer;
     transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
 }
 
     .admin-action-card:hover {
@@ -1814,6 +1815,172 @@ body.admin-page {
         opacity: 0.8;
         color: var(--blue);
     }
+
+/* =============================================
+   ADMIN TABLES & CHARTS
+   ============================================= */
+.users-table-card,
+.itineraries-table-card {
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 2rem;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.search-box {
+    margin-bottom: 1.5rem;
+}
+
+    .search-box input {
+        width: 100%;
+        max-width: 400px;
+        padding: 0.75rem 1rem;
+        border-radius: 50px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1);
+        color: var(--white);
+        font-family: 'DM Sans', sans-serif;
+    }
+
+        .search-box input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .admin-table thead {
+        background: rgba(255,255,255,0.1);
+    }
+
+    .admin-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: rgba(255,255,255,0.8);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .admin-table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        color: var(--white);
+        font-size: 0.9rem;
+    }
+
+    .admin-table tr:hover {
+        background: rgba(255,255,255,0.05);
+    }
+
+.title-col {
+    font-weight: 600;
+}
+
+.actions-col {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-view-small,
+.btn-delete-small {
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-view-small {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.btn-delete-small {
+    background: #fdecea;
+    color: #c0392b;
+}
+
+    .btn-view-small:hover,
+    .btn-delete-small:hover {
+        opacity: 0.8;
+    }
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .status-badge.active {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+
+    .status-badge.past {
+        background: rgba(107, 114, 128, 0.2);
+        color: #9ca3af;
+    }
+
+/* Charts */
+.admin-charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.chart-card {
+    background: rgba(255,255,255,0.1);
+    border-radius: var(--radius);
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+}
+
+    .chart-card h3 {
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--white);
+        margin: 0 0 1.5rem 0;
+    }
+
+.chart-container {
+    height: 250px;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .admin-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-table {
+        font-size: 0.8rem;
+    }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 0.75rem 0.5rem;
+        }
+}
 
 /* Responsive */
 @media (max-width: 1024px) {
