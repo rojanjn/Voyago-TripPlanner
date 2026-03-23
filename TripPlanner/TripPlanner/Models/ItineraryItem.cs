@@ -29,5 +29,14 @@ public class ItineraryItem
     // navigation property back to the user
     public Itinerary Itinerary { get; set; } = null!;
     public Location Location { get; set; } = null!;
+    
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (EndDateTime <= StartDateTime)
+            yield return new ValidationResult(
+                "End time must be after start time",
+                new[] { nameof(EndDateTime) }
+            );
+    }
 
 }

@@ -31,4 +31,13 @@ public class Itinerary
     public ApplicationUser? User { get; set; }
     public Country? Country { get; set; }
     public ICollection<ItineraryItem> ItineraryItems { get; set; } = new List<ItineraryItem>();
+    
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (EndDate <= StartDate)
+            yield return new ValidationResult(
+                "End time must be after start time",
+                new[] { nameof(EndDate) }
+            );
+    }
 }

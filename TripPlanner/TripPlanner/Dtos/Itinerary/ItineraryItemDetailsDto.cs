@@ -13,4 +13,8 @@ public class ItineraryItemDetailsDto
     public DateTime? EndDateTime { get; set; }
 
     public LocationDto Location { get; set; } = new();
+    
+    public List<ItineraryItemDetailsDto> Items { get; set; } = new();
+    
+    
 }
