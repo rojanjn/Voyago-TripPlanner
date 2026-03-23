@@ -58,4 +58,8 @@ node_modules/
 # ==========================================
 *.DS_Store
 .editorconfig
-/TripPlanner/TripPlanner/appsettings.json
+
+# App settings with secrets
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
