@@ -2,7 +2,6 @@
 # 1. Sensitive Information & Local Settings
 # ==========================================
 # Prevent leaking database connection strings or secrets
-/TripPlanner/TripPlanner/appsettings.json
 /TripPlanner/TripPlanner/appsettings.Development.json
 .env
 *.db
