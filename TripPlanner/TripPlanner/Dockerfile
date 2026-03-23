@@ -5,7 +5,7 @@ COPY *.csproj ./
 RUN dotnet restore
 
 COPY . ./
-RUN dotnet publish -c Release -o out --no-incremental
+RUN dotnet publish -c Release -o out /p:UseIncrementalCompilation=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
