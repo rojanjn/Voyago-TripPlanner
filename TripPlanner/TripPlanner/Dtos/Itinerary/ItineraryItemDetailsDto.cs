@@ -14,7 +14,5 @@ public class ItineraryItemDetailsDto
 
     public LocationDto Location { get; set; } = new();
     
-    public List<ItineraryItemDetailsDto> Items { get; set; } = new();
-    
     
 }

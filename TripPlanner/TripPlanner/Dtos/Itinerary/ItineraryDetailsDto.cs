@@ -11,6 +11,8 @@ public class ItineraryDetailsDto
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }
+    
+    public List<ItineraryItemDetailsDto> Items { get; set; } = new();
 
     
 }
