@@ -104,7 +104,8 @@ namespace TripPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
             return View(itinerary);
         }
 

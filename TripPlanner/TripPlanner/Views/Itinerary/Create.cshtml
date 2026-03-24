@@ -44,9 +44,13 @@
         <h2 class="form-card-title" style="color: white; text-align: center; margin-bottom: 1rem;">Plan Your Trip</h2>
 
         <form asp-action="Create" method="post">
+            
+            @* Client side validation *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-card">
                 <div class="form-field">
-                    <input asp-for="Title" class="form-input" placeholder="Trip Title" />
+                    <input asp-for="Title" class="form-input" placeholder="Trip Title"/>
+                    <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
@@ -61,14 +65,17 @@
                 </div>
 
                 <div class="form-field">
-                    <input asp-for="Description" class="form-input" placeholder="Description" />
+                    <input asp-for="Description" class="form-input" placeholder="Description"/>
                 </div>
 
                 <div class="form-field">
                     <label class="form-label">Add Dates</label>
                     <div class="dates-row">
-                        <input asp-for="StartDate" class="form-input" type="date" />
-                        <input asp-for="EndDate" class="form-input" type="date" />
+                        <input asp-for="StartDate" class="form-input" type="date"/>
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                        
+                        <input asp-for="EndDate" class="form-input" type="date"/>
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -80,3 +87,5 @@
         </form>
     </div>
 </div>
+
+@await Html.PartialAsync("_ValidationScriptsPartial")
