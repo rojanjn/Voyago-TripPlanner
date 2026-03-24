@@ -1419,6 +1419,13 @@ body.admin-page {
     color: var(--text);
     font-size: 0.9rem;
     text-align: right;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
 }
 
 .delete-actions {
