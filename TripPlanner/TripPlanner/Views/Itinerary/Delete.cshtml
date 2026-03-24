@@ -5,6 +5,13 @@
     Layout = "_Layout";
 }
 
+@section Scripts {
+    <script>
+        // Make navbar white immediately on Details page
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+}
+
 <div class="itinerary-page">
     <div class="itinerary-page-inner">
 
@@ -33,7 +40,7 @@
                 }
                 <div class="delete-row">
                     <span class="delete-label">Dates</span>
-                    <span class="delete-value">@Model.StartDate.ToShortDateString() ? @Model.EndDate.ToShortDateString()</span>
+                    <span class="delete-value">@Model.StartDate.ToShortDateString() : @Model.EndDate.ToShortDateString()</span>
                 </div>
             </div>
 

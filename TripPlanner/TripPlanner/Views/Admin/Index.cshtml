@@ -1,6 +1,146 @@
-﻿@{
-	ViewData["Title"] = "Admin";
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<h2>Admin Dashboard</h2>
-<p>Testing Admin Role</p>
+@section Scripts {
+    <script>
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Itineraries Status Chart
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Active', 'Past'],
+                    datasets: [{
+                        data: [@Model.ActiveItineraries, @Model.PastItineraries],
+                        backgroundColor: ['#1a6fd4', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { size: 14 } }
+                        }
+                    }
+                }
+            });
+
+            // Monthly Activity Chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['This Month', 'Total'],
+                    datasets: [{
+                        label: 'Itineraries',
+                        data: [@Model.ItinerariesThisMonth, @Model.TotalItineraries],
+                        backgroundColor: ['#1a6fd4', '#0a3880']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#fff' }
+                        },
+                        x: {
+                            ticks: { color: '#fff' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+<div class="admin-dashboard">
+    <!-- Header -->
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p class="admin-subtitle">Welcome back. Here's what's happening with Voyago.</p>
+        </div>
+        <span class="admin-badge">Administrator</span>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="admin-stats">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">👥</div>
+            <div class="admin-stat-label">Total Users</div>
+            <div class="admin-stat-value">@Model.TotalUsers</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">✈️</div>
+            <div class="admin-stat-label">Total Itineraries</div>
+            <div class="admin-stat-value">@Model.TotalItineraries</div>
+        </div>
+
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon">🌍</div>
+            <div class="admin-stat-label">Countries</div>
+            <div class="admin-stat-value">@Model.TotalCountries</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="admin-charts">
+        <div class="chart-card">
+            <h3>Itinerary Status</h3>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Activity Overview</h3>
+            <div class="chart-container">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="admin-actions">
+        <a asp-action="Users" class="admin-action-card">
+            <div class="admin-action-icon">👥</div>
+            <div class="admin-action-body">
+                <h5>Manage Users</h5>
+                <p>View all registered users</p>
+            </div>
+            <div class="admin-action-arrow">→</div>
+        </a>
+
+        <a asp-action="AllItineraries" class="admin-action-card">
+            <div class="admin-action-icon">✈️</div>
+            <div class="admin-action-body">
+                <h5>Manage Itineraries</h5>
+                <p>View and delete all itineraries</p>
+            </div>
+            <div class="admin-action-arrow">→</div>
+        </a>
+
+        @* <a asp-controller="Country" asp-action="Index" class="admin-action-card">
+            <div class="admin-action-icon">🌍</div>
+            <div class="admin-action-body">
+                <h5>Manage Countries</h5>
+                <p>Add or remove destinations</p>
+            </div>
+            <div class="admin-action-arrow">→</div>
+        </a> *@
+    </div>
+</div>

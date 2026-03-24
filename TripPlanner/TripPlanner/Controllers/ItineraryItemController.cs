@@ -6,6 +6,8 @@ using TripPlanner.Data;
 using TripPlanner.Dtos.ItineraryItem;
 using TripPlanner.Models;
 
+
+
 namespace TripPlanner.Controllers;
 
 [Authorize]
@@ -84,26 +86,43 @@ public class ItineraryItemController : ControllerBase
     
     
     
-    // Create Item (POST) /itineraries/{itineraryId}/items
-    // Verifies the LocationId actually exists in your database first
-    // Saves the item and returns it with the location name included
+    // POST /itineraries/{itineraryId}/items
+    // Saves location if it doesn't exist yet, then adds it as a stop
     [HttpPost]
-    public async Task<IActionResult> CreateItem(int itineraryId,
-        CreateItineraryItemDto dto)
+    public async Task<IActionResult> CreateItem(int itineraryId, CreateItineraryItemDto dto)
     {
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
         if (itinerary == null) return NotFound();
-        
-        var locationExists = await _context.Locations.AnyAsync(l => l.Id == dto.LocationId);
-        if (!locationExists) return BadRequest("Location not found.");
+
+        // Check if location already exists by PlaceId, create it if not
+        var location = await _context.Locations
+            .FirstOrDefaultAsync(l => l.PlaceId == dto.Location.PlaceId);
+
+        if (location == null)
+        {
+            location = new Location
+            {
+                Name = dto.Location.Name,
+                Address = dto.Location.Address,
+                Latitude = dto.Location.Latitude,
+                Longitude = dto.Location.Longitude,
+                PlaceId = dto.Location.PlaceId
+            };
+            _context.Locations.Add(location);
+            await _context.SaveChangesAsync();
+        }
+
+        var nextStopOrder = await _context.ItineraryItems
+            .Where(i => i.ItineraryId == itineraryId)
+            .MaxAsync(i => (int?)i.StopOrder) ?? 0;
 
         var item = new ItineraryItem
         {
             ItineraryId = itineraryId,
-            LocationId = dto.LocationId,
-            StartDateTime = dto.StartDateTime,
-            EndDateTime = dto.EndDateTime,
-            StopOrder = dto.StopOrder,
+            LocationId = location.Id,
+            StopOrder = nextStopOrder + 1,
+            StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc),
+            EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc),
             Note = dto.Note
         };
 
@@ -114,7 +133,7 @@ public class ItineraryItemController : ControllerBase
         {
             Id = item.Id,
             LocationId = item.LocationId,
-            LocationName = (await _context.Locations.FindAsync(item.LocationId))!.Name,
+            LocationName = location.Name,
             StartDateTime = item.StartDateTime,
             EndDateTime = item.EndDateTime,
             StopOrder = item.StopOrder,
@@ -123,12 +142,9 @@ public class ItineraryItemController : ControllerBase
 
         return Ok(resultDto);
     }
-    
-    
-    
-    // Update Item (PUT)
-    // Updates an existing stop (time, order, note, location)
-    // Checks both that the itinerary belongs to you AND the item belongs to that itinerary
+
+    // PUT /itineraries/{itineraryId}/items/{itemId}
+    // Updates an existing stop's time, order, and note
     [HttpPut("{itemId:int}")]
     public async Task<IActionResult> UpdateItem(
         int itineraryId,
@@ -139,16 +155,10 @@ public class ItineraryItemController : ControllerBase
         if (itinerary == null) return NotFound();
 
         var item = await _context.ItineraryItems
-            .FirstOrDefaultAsync(i =>
-                i.Id == itemId &&
-                i.ItineraryId == itineraryId);
+            .FirstOrDefaultAsync(i => i.Id == itemId && i.ItineraryId == itineraryId);
 
         if (item == null) return NotFound();
 
-        var locationExists = await _context.Locations.AnyAsync(l => l.Id == dto.LocationId);
-        if (!locationExists) return BadRequest("Location not found.");
-
-        item.LocationId = dto.LocationId;
         item.StartDateTime = dto.StartDateTime;
         item.EndDateTime = dto.EndDateTime;
         item.StopOrder = dto.StopOrder;
@@ -157,22 +167,36 @@ public class ItineraryItemController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
-    
-    
-    
-    // Delete Item (DELETE) /itineraries/{itineraryId}/items/{itemId}
+
+    // PUT /itineraries/{itineraryId}/items/reorder
+    // Updates StopOrder for all items based on the provided ordered list of IDs
+    [HttpPut("reorder")]
+    public async Task<IActionResult> ReorderItems(int itineraryId, [FromBody] List<int> itemIds)
+    {
+        var itinerary = await GetOwnedItineraryAsync(itineraryId);
+        if (itinerary == null) return NotFound();
+
+        for (int i = 0; i < itemIds.Count; i++)
+        {
+            var item = await _context.ItineraryItems.FindAsync(itemIds[i]);
+            if (item == null) return NotFound();
+            item.StopOrder = i + 1;
+        }
+
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    // DELETE /itineraries/{itineraryId}/items/{itemId}
+    // Removes a stop from the itinerary
     [HttpDelete("{itemId:int}")]
-    public async Task<IActionResult> DeleteItem(
-        int itineraryId,
-        int itemId)
+    public async Task<IActionResult> DeleteItem(int itineraryId, int itemId)
     {
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
         if (itinerary == null) return NotFound();
 
         var item = await _context.ItineraryItems
-            .FirstOrDefaultAsync(i =>
-                i.Id == itemId &&
-                i.ItineraryId == itineraryId);
+            .FirstOrDefaultAsync(i => i.Id == itemId && i.ItineraryId == itineraryId);
 
         if (item == null) return NotFound();
 
@@ -180,6 +204,8 @@ public class ItineraryItemController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+    
+    
     
 }
 

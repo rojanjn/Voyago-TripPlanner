@@ -22,7 +22,7 @@ public class LocationController : ControllerBase
         _googleService = googleService;
     }
         
-        
+    /*
     // Get /locations
     // Returns all locations currently saved in the DB
     [HttpGet]
@@ -154,10 +154,23 @@ public class LocationController : ControllerBase
         });
 
         return Ok(results);
+        
+        
     }
+    */
         
-        
-        
+    // GET /Itinerary/SearchAttractions?query=
+    // Searches locations already in your database by name
+    [HttpGet]
+    public async Task<IActionResult> SearchLocations(string query)
+    {
+        var results = await _context.Locations
+            .Where(l => l.Name.Contains(query))
+            .Select(l => new { l.Id, l.Name, l.Address })
+            .ToListAsync();
+
+        return Ok(results);
+    }
         
         
         

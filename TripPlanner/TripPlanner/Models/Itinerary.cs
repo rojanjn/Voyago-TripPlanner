@@ -26,10 +26,13 @@ public class Itinerary
 
     [Required]
     public DateTime EndDate { get; set; }
+    
+    public Country? Country { get; set; }
 
     // navigation property back to the user
     public ApplicationUser? User { get; set; }
-    public Country? Country { get; set; }
+    
+    
     public ICollection<ItineraryItem> ItineraryItems { get; set; } = new List<ItineraryItem>();
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

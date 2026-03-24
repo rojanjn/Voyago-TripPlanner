@@ -4,7 +4,6 @@ using TripPlanner.Models;
 using TripPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using TripPlanner.Dtos.Itinerary;
-using TripPlanner.Dtos.ItineraryItem;
 using TripPlanner.Dtos.Location;
 using TripPlanner.Services;
 
@@ -105,7 +104,8 @@ namespace TripPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            
+            ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
             return View(itinerary);
         }
 
@@ -297,107 +297,6 @@ namespace TripPlanner.Controllers
                 return NotFound();
 
             return Ok(route);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)
-        {
-            var itinerary = await _context.Itineraries.FindAsync(dto.ItineraryId);
-            if (itinerary == null) return NotFound();
-
-            // Ownership check to match your existing pattern
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (itinerary.UserId != userId) return Forbid();
-            }
-            
-            // Check if location already exists by PlaceId
-            var location = await _context.Locations
-                .FirstOrDefaultAsync(l => l.PlaceId == dto.PlaceId);
-            
-            // If not, create it
-            if (location == null)
-            {
-                location = new Location
-                {
-                    Name = dto.Name,
-                    Address = dto.Address,
-                    Latitude = dto.Latitude,
-                    Longitude = dto.Longitude,
-                    PlaceId = dto.PlaceId
-                };
-                _context.Locations.Add(location);
-                await _context.SaveChangesAsync();
-            }
-
-            var nextStopOrder = await _context.ItineraryItems
-                .Where(i => i.ItineraryId == dto.ItineraryId)
-                .MaxAsync(i => (int?)i.StopOrder) ?? 0;
-
-            var item = new ItineraryItem
-            {
-                ItineraryId = dto.ItineraryId,
-                LocationId = location.Id,
-                StopOrder = nextStopOrder + 1,
-                StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc),
-                EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc)
-            };
-
-            _context.ItineraryItems.Add(item);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-        
-        [HttpPost]
-        public async Task<IActionResult> RemoveAttraction([FromBody] RemoveAttractionDto dto)
-        {
-            var item = await _context.ItineraryItems.FindAsync(dto.ItineraryItemId);
-            if (item == null) return NotFound();
-            
-            // Ownership check
-            var itinerary = await _context.Itineraries.FindAsync(item.ItineraryId);
-            if (itinerary == null) return NotFound();
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (itinerary.UserId != userId) return Forbid();
-            }
-
-            _context.ItineraryItems.Remove(item);
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ReorderAttraction([FromBody] ReorderAttractionsDto dto)
-        {
-            Console.WriteLine($"ReorderAttraction called with itineraryId: {dto.ItineraryId}");
-            Console.WriteLine($"ItemIds: {string.Join(", ", dto.ItemIds)}");
-            
-            var itinerary = await _context.Itineraries.FindAsync(dto.ItineraryId);
-            if (itinerary == null) return NotFound();
-
-            if (!User.IsInRole("Admin"))
-            {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                if (itinerary.UserId != userId) return Forbid();
-            }
-
-            for (int i = 0; i < dto.ItemIds.Count; i++)
-            {
-                var item = await _context.ItineraryItems.FindAsync(dto.ItemIds[i]);
-                Console.WriteLine($"Item {dto.ItemIds[i]}: StopOrder changing to {i + 1}");
-                if (item == null) return NotFound();
-                item.StopOrder = i + 1;
-            }
-            
-            await _context.SaveChangesAsync();
-            Console.WriteLine("SaveChanges complete");
-            
-            return Ok();
         }
     }
 }

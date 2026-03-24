@@ -4,6 +4,7 @@
     ViewData["Title"] = "Itineraries";
 }
 
+
 <div class="itinerary-page">
 <div class="itinerary-page-inner">
 
@@ -101,6 +102,11 @@
 </div>
 
 @section Scripts {
+    <script>
+        // Make navbar white immediately on Details page
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+
     <script>
         // feature: pagination logic — shows 4 cards per page, arrows cycle through pages
         const CARDS_PER_PAGE = 4;
