@@ -1,0 +1,60 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+@section Scripts {
+    <script>
+        document.querySelector('.navbar').classList.add('scrolled');
+    </script>
+}
+
+<div class="admin-dashboard">
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Users</h1>
+            <p class="admin-subtitle">View all registered users</p>
+        </div>
+        <a asp-action="Index" class="itin-add-btn">← Back to Dashboard</a>
+    </div>
+
+    <div class="users-table-card">
+        <div class="search-box">
+            <input type="text" id="userSearch" placeholder="Search by email..." />
+        </div>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Total Trips</th>
+                    <th>Active Trips</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr class="user-row" data-email="@user.Email">
+                        <td>@user.Email</td>
+                        <td>@user.UserName</td>
+                        <td>@user.ItineraryCount</td>
+                        <td>@user.ActiveTrips</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('userSearch');
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        document.querySelectorAll('.user-row').forEach(row => {
+            const email = row.dataset.email.toLowerCase();
+            row.style.display = email.includes(query) ? '' : 'none';
+        });
+    });
+</script>

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/TripPlanner.styles.css" asp-append-version="true"/>
     <link rel="icon" type="image/png" href="~/favicon.ico">
 </head>
-<body>
+<body class="@ViewData["BodyClass"]">
 <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm" id="mainNavbar">
             <div class="container-fluid">
@@ -41,7 +41,7 @@
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Dashboard">Admin Dashboard</a>
+                            <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                         </li>
 						}
                 </ul>

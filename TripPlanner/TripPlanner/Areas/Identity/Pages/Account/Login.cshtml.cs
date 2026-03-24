@@ -122,7 +122,7 @@ namespace TripPlanner.Areas.Identity.Pages.Account
 
                     if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                     {
-                        return RedirectToAction("Dashboard", "Admin");
+                        return RedirectToAction("Index", "Admin");
                     }
                  
                     return RedirectToAction("Index", "Home"); // normal users
