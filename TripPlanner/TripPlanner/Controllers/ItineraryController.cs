@@ -287,9 +287,8 @@ namespace TripPlanner.Controllers
             return Ok(result);
         }
         
-        // GET /Itinerary/{id}/route
         // Calls RouteService to calculate the full route between all stops
-        [HttpGet("{id}/route")]
+        [HttpGet]
         public async Task<IActionResult> GetRoute(int id)
         {
             var route = await _routeService.GetRoute(id);
@@ -299,20 +298,6 @@ namespace TripPlanner.Controllers
 
             return Ok(route);
         }
-        
-        // GET /Itinerary/SearchAttractions?query=
-        // Searches locations already in your database by name
-        [HttpGet]
-        public async Task<IActionResult> SearchAttractions(string query)
-        {
-            var results = await _context.Locations
-                .Where(l => l.Name.Contains(query))
-                .Select(l => new { l.Id, l.Name, l.Address })
-                .ToListAsync();
-
-            return Json(results);
-        }
-
 
         [HttpPost]
         public async Task<IActionResult> AddAttraction([FromBody] AddAttractionDto dto)
@@ -389,6 +374,9 @@ namespace TripPlanner.Controllers
         [HttpPost]
         public async Task<IActionResult> ReorderAttraction([FromBody] ReorderAttractionsDto dto)
         {
+            Console.WriteLine($"ReorderAttraction called with itineraryId: {dto.ItineraryId}");
+            Console.WriteLine($"ItemIds: {string.Join(", ", dto.ItemIds)}");
+            
             var itinerary = await _context.Itineraries.FindAsync(dto.ItineraryId);
             if (itinerary == null) return NotFound();
 
@@ -401,11 +389,13 @@ namespace TripPlanner.Controllers
             for (int i = 0; i < dto.ItemIds.Count; i++)
             {
                 var item = await _context.ItineraryItems.FindAsync(dto.ItemIds[i]);
+                Console.WriteLine($"Item {dto.ItemIds[i]}: StopOrder changing to {i + 1}");
                 if (item == null) return NotFound();
                 item.StopOrder = i + 1;
             }
             
             await _context.SaveChangesAsync();
+            Console.WriteLine("SaveChanges complete");
             
             return Ok();
         }

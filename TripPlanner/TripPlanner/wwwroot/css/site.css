@@ -1504,6 +1504,7 @@ body.admin-page {
         border-color: var(--blue);
         background: white;
     }
+    
 /* Dragging */
 .drag-placeholder {
     background: #f0f0f0;
