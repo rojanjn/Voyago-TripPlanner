@@ -66,7 +66,7 @@
                         return;
                     }
 
-                    const response = await fetch(`/Itinerary/SearchAttractions?query=${encodeURIComponent(query)}`);
+                    const response = await fetch(`/Location/SearchLocations?query=${encodeURIComponent(query)}`);
                     const locations = await response.json();
 
                     searchResults.innerHTML = '';
@@ -87,7 +87,7 @@
                 btnAdd.addEventListener('click', async () => {
                     if (!selectedLocationId) return;
                     
-                    await fetch('/Itinerary/AddAttraction', {
+                    await fetch('/ItineraryItem/CreateItem', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -105,7 +105,7 @@
                     const card = btn.closest('.location-item');
                     const itineraryItemId = card.dataset.itemId;
 
-                    await fetch('/Itinerary/RemoveAttraction', {
+                    await fetch('/ItineraryItem/DeleteItem', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ itineraryItemId: parseInt(itineraryItemId) })
