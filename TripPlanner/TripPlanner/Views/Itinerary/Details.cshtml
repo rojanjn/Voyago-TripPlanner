@@ -23,7 +23,7 @@
             
             <div id="map" class="map-view"></div>
             
-            <button id="btnAddAttraction" class="btn-add-location" disabled>
+            <button id="add-location" class="btn-add-location" disabled>
                 Add attraction
             </button>
         </div>
@@ -179,8 +179,8 @@
             }
 
             let selectedPlace = null;
-            const searchInput = document.getElementById('attractionSearch');
-            const btnAdd = document.getElementById('btnAddAttraction');
+            const searchInput = document.getElementById('map-search-box');
+            const btnAdd = document.getElementById('btn-add-location');
 
             // Initialize Google Places Autocomplete
             const autocomplete = new google.maps.places.Autocomplete(searchInput, {
@@ -206,7 +206,7 @@
             btnAdd.addEventListener('click', async () => {
                 if (!selectedPlace) return;
 
-                await fetch('/Itinerary/AddAttraction', {
+                await fetch('/ItineraryItem/CreateItem', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -234,7 +234,7 @@
                     const card = btn.closest('.location-item');
                     const itineraryItemId = card.dataset.itemId;
 
-                    await fetch('/Itinerary/RemoveAttraction', {
+                    await fetch('/ItineraryItem/DeleteItem', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ itineraryItemId: parseInt(itineraryItemId) })
@@ -320,7 +320,7 @@
 
                 console.log('about to fetch reorder');
 
-                await fetch('/Itinerary/ReorderAttraction', {
+                await fetch('/ItineraryItem/ReorderItems', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -332,7 +332,6 @@
                 console.log('fetch complete');
 
                 draggedCard = null;
-                location.reload();
             }
         });
     </script>
