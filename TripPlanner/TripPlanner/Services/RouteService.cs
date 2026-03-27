@@ -29,14 +29,11 @@ public class RouteService
             .Where(i => i.ItineraryId == itineraryId)
             .OrderBy(i => i.StopOrder)
             .ToListAsync();
-        
-        Console.WriteLine($"Items count: {items.Count}");
 
         if (items.Count < 2)
             return null;
 
         var apiKey = _config["GoogleMaps:ApiKey"];
-        Console.WriteLine($"API key is null: {apiKey == null}");
 
         var origin = $"{items.First().Location.Latitude},{items.First().Location.Longitude}";
         var destination = $"{items.Last().Location.Latitude},{items.Last().Location.Longitude}";
@@ -53,13 +50,11 @@ public class RouteService
             $"&key={apiKey}";
 
         var response = await _httpClient.GetAsync(url);
-        Console.WriteLine($"Directions API status: {response.StatusCode}");
 
         if (!response.IsSuccessStatusCode)
             return null;
 
         var json = await response.Content.ReadAsStringAsync();
-        Console.WriteLine($"Directions API response: {json}");
 
         var options = new JsonSerializerOptions
         {

@@ -181,6 +181,7 @@ public class ItineraryItemController : ControllerBase
             var item = await _context.ItineraryItems.FindAsync(itemIds[i]);
             if (item == null) return NotFound();
             item.StopOrder = i + 1;
+            _context.Entry(item).Property(x => x.StopOrder).IsModified = true;
         }
 
         await _context.SaveChangesAsync();
