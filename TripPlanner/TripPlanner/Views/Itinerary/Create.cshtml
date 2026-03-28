@@ -47,10 +47,11 @@
         <h2 class="form-card-title" style="color: white; text-align: center; margin-bottom: 1rem;">Plan Your Trip</h2>
 
         <form asp-action="Create" method="post">
-            
-            @* Client side validation *@
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-card">
+                <!-- Show validation errors at the top -->
+                <div asp-validation-summary="All" class="text-danger" style="margin-bottom: 1rem"></div>
+
                 <div class="form-field">
                     <input asp-for="Title" class="form-input" placeholder="Trip Title"/>
                     <span asp-validation-for="Title" class="text-danger"></span>
