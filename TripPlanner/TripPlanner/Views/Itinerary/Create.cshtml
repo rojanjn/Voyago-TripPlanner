@@ -37,6 +37,9 @@
             });
         }
     </script>
+
+    <!-- Validation logic for required fields -->
+	<partial name="_ValidationScriptsPartial" />
 }
 
 <div class="itinerary-page">
@@ -87,5 +90,3 @@
         </form>
     </div>
 </div>
-
-@await Html.PartialAsync("_ValidationScriptsPartial")
