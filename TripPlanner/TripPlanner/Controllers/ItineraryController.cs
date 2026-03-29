@@ -92,6 +92,12 @@ namespace TripPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Itinerary itinerary)
         {
+            // validate dates
+            if (itinerary.EndDate <= itinerary.StartDate)
+            {
+                ModelState.AddModelError("EndDate", "End date must be after start date");
+            }
+
             if (ModelState.IsValid)
             {
                 // Assign the current user as the owner before saving
@@ -104,7 +110,8 @@ namespace TripPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
+            // if validation failed, reload countries and return to form
             ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
             return View(itinerary);
         }

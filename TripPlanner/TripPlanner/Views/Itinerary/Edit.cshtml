@@ -9,6 +9,8 @@
         // Make navbar white immediately on Details page
         document.querySelector('.navbar').classList.add('scrolled');
     </script>
+
+    <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" />
 }
 
 <div class="itinerary-page">
@@ -19,6 +21,9 @@
 
             <form asp-action="Edit" method="post">
                 @Html.HiddenFor(model => model.Id)
+
+                <!-- Add validation summary -->
+                <div asp-validation-summary="All" class="text-danger" style="margin-bottom: 1rem;"></div>
 
                 <div class="form-field">
                     <label class="form-label">Trip Title</label>
