@@ -14,15 +14,15 @@
 
 ---
 
-## 📖 About
+## About
 
-Voyago is a full-stack travel planning web application developed as part of a semester-long course project at George Brown College. Built using the **ASP.NET** framework, the application is designed to simplify and enhance the travel planning experience for users of all backgrounds.
+Voyago is a full-stack travel planning web application developed as part of a semester-long course project at George Brown Polytechnic. Built using the **ASP.NET** framework, the application is designed to simplify and enhance the travel planning experience for users of all backgrounds.
 
 The platform allows users to browse destinations, create personalized itineraries, and organize their travel plans in one centralized location. With a clean and intuitive interface, Voyago aims to make trip planning more accessible and enjoyable — whether you're planning a weekend getaway or an extended international journey.
 
 ---
 
-## 🛠️ What We Learned
+## What We Learned
 
 This project reflects our team's practical application of core web development concepts:
 
@@ -36,5 +36,5 @@ Through Voyago, we demonstrated our ability to collaborate as a development team
 ---
 
 <div align="center">
-Made with ❤️ by the Voyago Team @ George Brown College
+Made with ❤️ by the Voyago Team @ George Brown Polytechnic
 </div>
