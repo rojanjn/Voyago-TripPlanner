@@ -159,8 +159,8 @@ public class ItineraryItemController : ControllerBase
 
         if (item == null) return NotFound();
 
-        item.StartDateTime = dto.StartDateTime;
-        item.EndDateTime = dto.EndDateTime;
+        item.StartDateTime = DateTime.SpecifyKind(dto.StartDateTime,  DateTimeKind.Utc);
+        item.EndDateTime = DateTime.SpecifyKind(dto.EndDateTime,  DateTimeKind.Utc);
         item.StopOrder = dto.StopOrder;
         item.Note = dto.Note;
 
