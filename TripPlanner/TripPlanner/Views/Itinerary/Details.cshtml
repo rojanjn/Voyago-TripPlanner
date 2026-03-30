@@ -55,6 +55,17 @@
                         @Model.EndDate.ToString("MMM dd, yyyy")
                     </div>
                 </div>
+                
+                @if (Model.ItineraryItems != null && Model.ItineraryItems.Count >= 2)
+                {
+                    <div class="route-summary" id="routeSummary" style="display:none;">
+                        <span class="route-summary-icon">🚗</span>
+                        <span>Total: </span>
+                        <strong id="totalDistance">—</strong>
+                        <span>&nbsp;·&nbsp;</span>
+                        <strong id="totalDuration">—</strong>
+                    </div>
+                }
 
                 <!-- Locations List -->
                 <div class="locations-section">
@@ -66,6 +77,8 @@
 
                     @if (orderedItems.Any())
                     {
+                        
+                        
                         <div class="locations-list">
                             @for (int idx = 0; idx < orderedItems.Count; idx++)
                             {
@@ -113,9 +126,7 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 
-
                                 @* ← Leg connector inserted HERE, after card, before next iteration *@
                                 @if (idx < orderedItems.Count - 1)
                                 {
@@ -131,16 +142,8 @@
                                 }
                             }
                         </div>
-                        @if (Model.ItineraryItems != null && Model.ItineraryItems.Count >= 2)
-                        {
-                            <div class="route-summary" id="routeSummary" style="display:none;">
-                                <span class="route-summary-icon">🚗</span>
-                                <span>Total: </span>
-                                <strong id="totalDistance">—</strong>
-                                <span>&nbsp;·&nbsp;</span>
-                                <strong id="totalDuration">—</strong>
-                            </div>
-                        }
+                        
+                        
                     }
                     else
                     {
@@ -206,6 +209,7 @@
             // Fetch and draw route if there are 2+ locations
             if (locations.length >= 2) {
                 const response = await fetch('/Itinerary/GetRoute?id=@Model.Id');
+
                 if (response.ok) {
                     const route = await response.json();
 

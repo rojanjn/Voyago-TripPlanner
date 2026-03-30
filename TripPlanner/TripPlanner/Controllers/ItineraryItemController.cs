@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using TripPlanner.Data;
 using TripPlanner.Dtos.ItineraryItem;
 using TripPlanner.Models;
-
+using TripPlanner.Services;
 
 
 namespace TripPlanner.Controllers;
@@ -17,6 +17,7 @@ public class ItineraryItemController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RouteService _routeService;
 
     // Ownership Verification Core
     public ItineraryItemController(
@@ -24,10 +25,12 @@ public class ItineraryItemController : ControllerBase
         ApplicationDbContext context,
         
         // Get User ID from sign in status
-        UserManager<ApplicationUser> userManager)
+        UserManager<ApplicationUser> userManager,
+        RouteService routeService)
     {
         _context = context;
         _userManager = userManager;
+        _routeService = routeService;
     }
     
     
@@ -83,7 +86,7 @@ public class ItineraryItemController : ControllerBase
 
         return Ok(itemsDto);
     }
-    
+    */
     
     
     // POST /itineraries/{itineraryId}/items
@@ -142,7 +145,7 @@ public class ItineraryItemController : ControllerBase
 
         return Ok(resultDto);
     }
-    */
+    
     
     // PUT /itineraries/{itineraryId}/items/{itemId}
     // Updates an existing stop's time, order, and note
@@ -208,8 +211,6 @@ public class ItineraryItemController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
-    
-    
     
 }
 
