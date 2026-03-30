@@ -294,9 +294,8 @@ namespace TripPlanner.Controllers
             return Ok(result);
         }
         
-        // GET /Itinerary/{id}/route
         // Calls RouteService to calculate the full route between all stops
-        [HttpGet("{id}/route")]
+        [HttpGet]
         public async Task<IActionResult> GetRoute(int id)
         {
             var route = await _routeService.GetRoute(id);
@@ -306,6 +305,5 @@ namespace TripPlanner.Controllers
 
             return Ok(route);
         }
-        
     }
 }
