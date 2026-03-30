@@ -292,10 +292,8 @@
                     const card = btn.closest('.location-item');
                     const itineraryItemId = card.dataset.itemId;
 
-                    await fetch('/itineraries/@Model.Id/items/${itineraryItemId}', {
-                        method: 'DELETE',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(itemIds)
+                    await fetch(`/itineraries/@Model.Id/items/${itineraryItemId}`, {
+                        method: 'DELETE'
                     });
 
                     location.reload();
