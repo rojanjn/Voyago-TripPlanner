@@ -55,7 +55,7 @@ public class ItineraryItemController : ControllerBase
     }
     
     
-    
+    /*
     // Read Items (GET)
     // Returns all items in a specific itinerary
     [HttpGet]
@@ -142,7 +142,8 @@ public class ItineraryItemController : ControllerBase
 
         return Ok(resultDto);
     }
-
+    */
+    
     // PUT /itineraries/{itineraryId}/items/{itemId}
     // Updates an existing stop's time, order, and note
     [HttpPut("{itemId:int}")]
@@ -167,6 +168,8 @@ public class ItineraryItemController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+    
+    
 
     // PUT /itineraries/{itineraryId}/items/reorder
     // Updates StopOrder for all items based on the provided ordered list of IDs

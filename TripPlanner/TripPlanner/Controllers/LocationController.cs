@@ -134,6 +134,8 @@ public class LocationController : ControllerBase
 
         return NoContent();
     }
+    
+    
         
     // GET /locations/search?query=toronto
     [HttpGet("search")]
