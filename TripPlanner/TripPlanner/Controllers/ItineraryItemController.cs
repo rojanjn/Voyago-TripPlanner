@@ -59,37 +59,6 @@ public class ItineraryItemController : ControllerBase
     }
     
     
-    /*
-    // Read Items (GET)
-    // Returns all items in a specific itinerary
-    [HttpGet]
-    public async Task<IActionResult> GetItems(int itineraryId)
-    {
-        var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null) return NotFound();
-
-        var items = await _context.ItineraryItems
-            .Include(i => i.Location)
-            .Where(i => i.ItineraryId == itineraryId)
-            .OrderBy(i => i.StopOrder)
-            .ToListAsync();
-
-        var itemsDto = items.Select(i => new ItineraryItemDto
-        {
-            Id = i.Id,
-            LocationId = i.LocationId,
-            LocationName = i.Location.Name,
-            StartDateTime = i.StartDateTime,
-            EndDateTime = i.EndDateTime,
-            StopOrder = i.StopOrder,
-            Note = i.Note
-        });
-
-        return Ok(itemsDto);
-    }
-    */
-    
-    
     // POST /itineraries/{itineraryId}/items
     // Saves location if it doesn't exist yet, then adds it as a stop
     [HttpPost]
