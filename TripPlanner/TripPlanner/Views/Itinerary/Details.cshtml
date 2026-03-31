@@ -118,6 +118,9 @@
     <script src="~/js/details-locations.js"></script>
 
     <script>
+        // Make navbar white immediately on Details page
+        document.querySelector('.navbar').classList.add('scrolled');
+        
         window.__itineraryId = @Model.Id;
         window.__locations = @Html.Raw(JsonSerializer.Serialize(
                                  Model.ItineraryItems?.Select(i => new

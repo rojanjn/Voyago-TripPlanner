@@ -4,101 +4,106 @@
     ViewData["Title"] = "Itineraries";
 }
 
+<script>
+    // Make navbar white immediately on Details page
+    document.querySelector('.navbar').classList.add('scrolled');
+</script>
+
 
 <div class="itinerary-page">
-<div class="itinerary-page-inner">
+    <div class="itinerary-page-inner">
 
-    <div class="itin-header">
-        <div>
-            <h1 class="itin-title">My Itineraries</h1>
-            <p class="itin-subtitle">Manage and explore your travel plans.</p>
-        </div>
-        <a asp-action="Create" class="itin-add-btn">+ Add Itinerary</a>
-    </div>
-
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('current')">Current</button>
-        <button class="tab" onclick="showTab('past')">Past</button>
-    </div>
-
-    <div id="current" class="tab-content active">
-        <div class="itinerary-grid" id="current-grid">
-            @foreach (var item in Model.Where(t => t.EndDate >= DateTime.Now))
-            {
-                <div class="itinerary-card"
-                     onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
-                    <div class="card-top">
-                        <div>
-                            <div class="card-title">@item.Title</div>
-                            @if (item.Country != null)
-                            {
-                                <div class="card-country">@item.Country.CountryName</div>
-                            }
-                        </div>
-                        <div class="card-actions">
-                            <a asp-action="Edit" asp-route-id="@item.Id"
-                               class="card-btn edit-btn"
-                               onclick="event.stopPropagation();">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id"
-                               class="card-btn delete-btn"
-                               onclick="event.stopPropagation();">Delete</a>
-                        </div>
-                    </div>
-                    <div class="card-dates">
-                        @item.StartDate.ToShortDateString() → @item.EndDate.ToShortDateString()
-                    </div>
-                    @if (!string.IsNullOrEmpty(item.Description))
-                    {
-                        <p class="card-note">@item.Description</p>
-                    }
-                </div>
-            }
-        </div>
-        <!-- feature: pagination controls for current tab -->
-        <div class="pagination-controls" id="current-pagination">
-            <button class="page-arrow" id="current-prev" onclick="changePage('current', -1)">&#8592;</button>
-            <span class="page-indicator" id="current-indicator"></span>
-            <button class="page-arrow" id="current-next" onclick="changePage('current', 1)">&#8594;</button>
-        </div>
-    </div>
-
-    <div id="past" class="tab-content">
-        <div class="itinerary-grid" id="past-grid">
-            @foreach (var item in Model.Where(t => t.EndDate < DateTime.Now))
-            {
-                <div class="itinerary-card"
-                     onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
-                    <div class="card-top">
-                        <div>
-                            <div class="card-title">@item.Title</div>
-                            @if (item.Country != null)
-                            {
-                                <div class="card-country">@item.Country.CountryName</div>
-                            }
-                        </div>
-                        <!-- Feature: Able to edit and delete past itineraries -->
-                        <div class="card-actions">
-                            <a asp-action="Edit" asp-route-id="@item.Id"
-                               class="card-btn edit-btn"
-                               onclick="event.stopPropagation();">Edit</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id"
-                               class="card-btn delete-btn"
-                               onclick="event.stopPropagation();">Delete</a>
-                        </div>
-                    </div>
-                    <div class="card-dates">
-                        @item.StartDate.ToShortDateString() → @item.EndDate.ToShortDateString()
-                    </div>
-                    @if (!string.IsNullOrEmpty(item.Description))
-                    {
-                        <p class="card-note">@item.Description</p>
-                    }
-                </div>
-            }
+        <div class="itin-header">
+            <div>
+                <h1 class="itin-title">My Itineraries</h1>
+                <p class="itin-subtitle">Manage and explore your travel plans.</p>
+            </div>
+            <a asp-action="Create" class="itin-add-btn">+ Add Itinerary</a>
         </div>
 
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('current')">Current</button>
+            <button class="tab" onclick="showTab('past')">Past</button>
+        </div>
+
+        <div id="current" class="tab-content active">
+            <div class="itinerary-grid" id="current-grid">
+                @foreach (var item in Model.Where(t => t.EndDate >= DateTime.Now))
+                {
+                    <div class="itinerary-card"
+                         onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title">@item.Title</div>
+                                @if (item.Country != null)
+                                {
+                                    <div class="card-country">@item.Country.CountryName</div>
+                                }
+                            </div>
+                            <div class="card-actions">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="card-btn edit-btn"
+                                   onclick="event.stopPropagation();">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="card-btn delete-btn"
+                                   onclick="event.stopPropagation();">Delete</a>
+                            </div>
+                        </div>
+                        <div class="card-dates">
+                            @item.StartDate.ToShortDateString() → @item.EndDate.ToShortDateString()
+                        </div>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <p class="card-note">@item.Description</p>
+                        }
+                    </div>
+                }
+            </div>
+            <!-- feature: pagination controls for current tab -->
+            <div class="pagination-controls" id="current-pagination">
+                <button class="page-arrow" id="current-prev" onclick="changePage('current', -1)">&#8592;</button>
+                <span class="page-indicator" id="current-indicator"></span>
+                <button class="page-arrow" id="current-next" onclick="changePage('current', 1)">&#8594;</button>
+            </div>
+        </div>
+
+        <div id="past" class="tab-content">
+            <div class="itinerary-grid" id="past-grid">
+                @foreach (var item in Model.Where(t => t.EndDate < DateTime.Now))
+                {
+                    <div class="itinerary-card"
+                         onclick="window.location='@Url.Action("Details", new { id = item.Id })'">
+                        <div class="card-top">
+                            <div>
+                                <div class="card-title">@item.Title</div>
+                                @if (item.Country != null)
+                                {
+                                    <div class="card-country">@item.Country.CountryName</div>
+                                }
+                            </div>
+                            <!-- Feature: Able to edit and delete past itineraries -->
+                            <div class="card-actions">
+                                <a asp-action="Edit" asp-route-id="@item.Id"
+                                   class="card-btn edit-btn"
+                                   onclick="event.stopPropagation();">Edit</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id"
+                                   class="card-btn delete-btn"
+                                   onclick="event.stopPropagation();">Delete</a>
+                            </div>
+                        </div>
+                        <div class="card-dates">
+                            @item.StartDate.ToShortDateString() → @item.EndDate.ToShortDateString()
+                        </div>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <p class="card-note">@item.Description</p>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
     </div>
-</div>
 </div>
 
 @section Scripts {
