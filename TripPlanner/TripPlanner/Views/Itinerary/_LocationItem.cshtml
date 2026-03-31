@@ -1,0 +1,46 @@
+﻿@model TripPlanner.Models.ItineraryItem
+
+<div class="location-item" data-item-id="@Model.Id" data-stop-order="@Model.StopOrder">
+    <div class="drag-handle">☰</div>
+
+    <div class="location-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+    </div>
+    
+    <div class="location-details">
+        <div class="location-name">@Model.Location.Name</div>
+
+        <!-- View mode -->
+        <div class="location-time view-mode">
+            @Model.StartDateTime.ToString("MMM dd, yyyy h:mm tt") - @Model.EndDateTime.ToString("MMM dd, yyyy h:mm tt")
+        </div>
+
+        <!-- Edit mode -->
+        <div class="edit-mode" style="display:none;">
+            <label>Start</label>
+            <input type="datetime-local" class="input-start"
+                   value="@Model.StartDateTime.ToString("yyyy-MM-ddTHH:mm")"/>
+            <label>End</label>
+            <input type="datetime-local" class="input-end"
+                   value="@Model.EndDateTime.ToString("yyyy-MM-ddTHH:mm")"/>
+            <button class="btn-save-edit">Save</button>
+            <button class="btn-cancel-edit">Cancel</button>
+        </div>
+
+        <div class="location-actions">
+            <button class="btn-edit" title="Edit">✎</button>
+            <button class="btn-remove" title="Remove">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    </div>

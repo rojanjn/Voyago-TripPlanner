@@ -5,8 +5,6 @@ window.addEventListener('scroll', function () {
     const navbar = document.querySelector('.navbar');
     const hero = document.querySelector('.hero');
 
-    // feature: if we're on an inner page (no hero), don't touch the navbar
-    // because those pages force .scrolled via inline script
     const isInnerPage = document.querySelector('.itinerary-page, .admin-dashboard, .page-container');
     if (isInnerPage) return;
 
@@ -16,7 +14,7 @@ window.addEventListener('scroll', function () {
         navbar.classList.remove('scrolled');
     }
 
-    if (hero) {
+    if (hero && !isInnerPage) {
         const heroHeight = hero.offsetHeight;
         if (window.scrollY > heroHeight - 100) {
             document.body.classList.add('past-hero');
