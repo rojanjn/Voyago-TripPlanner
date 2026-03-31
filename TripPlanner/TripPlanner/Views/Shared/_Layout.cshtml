@@ -24,18 +24,6 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
-                    @* <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li> *@
-                    
-                    <!-- This nav button is only shown to authorize users -->
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Itinerary" asp-action="Index">Plan Your Trip</a>
-                        </li>
-                    }
-                    
 
                     <!-- This nav button is only shown to Admins -->
                     @if (User.IsInRole("Admin"))
@@ -55,14 +43,8 @@
         @RenderBody()
     </main>
 </div>
-
-@* <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2026 Voyago - All Rights Reserved
-    </div>
-</footer> *@
-
-    <!-- Footer is rendered in Index.cshtml -->
+    
+<!-- Footer is rendered in Index.cshtml -->
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -19,15 +19,46 @@
         <a asp-action="Index" class="itin-add-btn">← Back to Dashboard</a>
     </div>
 
+    <!-- Search & Filter Section -->
+    <div class="search-filter-box">
+        <input type="text" id="itinerarySearch" placeholder="Search by title, user, or country..." />
+
+        <select id="statusFilter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="past">Past</option>
+        </select>
+
+        <select id="countryFilter">
+            <option value="">All Countries</option>
+            @foreach (var country in Model.Select(i => i.Country?.CountryName).Distinct().Where(c => c != null).OrderBy(c => c))
+            {
+                <option value="@country">@country</option>
+            }
+        </select>
+
+        <button id="clearFilters" class="btn-clear-filters">Clear Filters</button>
+    </div>
+
     <div class="itineraries-table-card">
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>User</th>
-                    <th>Country</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
+                    <th class="sortable" data-sort="title">
+                        Title <span class="sort-icon">⇅</span>
+                    </th>
+                    <th class="sortable" data-sort="user">
+                        User <span class="sort-icon">⇅</span>
+                    </th>
+                    <th class="sortable" data-sort="country">
+                        Country <span class="sort-icon">⇅</span>
+                    </th>
+                    <th class="sortable" data-sort="start">
+                        Start Date <span class="sort-icon">⇅</span>
+                    </th>
+                    <th class="sortable" data-sort="end">
+                        End Date <span class="sort-icon">⇅</span>
+                    </th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -35,10 +66,17 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr data-user-email="@item.User?.Email"
+                        data-user-id="@item.User?.Id"
+                        data-start-date="@item.StartDate.ToString("yyyy-MM-dd")"
+                        data-end-date="@item.EndDate.ToString("yyyy-MM-dd")">
                         <td class="title-col">@item.Title</td>
-                        <td>@item.User?.Email</td>
-                        <td>@item.Country?.CountryName</td>
+                        <td class="user-col">
+                            <a href="#" class="user-link" data-user-id="@item.User?.Id" data-user-email="@item.User?.Email">
+                                @item.User?.Email
+                            </a>
+                        </td>
+                        <td class="country-col">@item.Country?.CountryName</td>
                         <td>@item.StartDate.ToShortDateString()</td>
                         <td>@item.EndDate.ToShortDateString()</td>
                         <td>
@@ -56,13 +94,12 @@
                                asp-action="Details"
                                asp-route-id="@item.Id"
                                class="btn-view-small">View</a>
-                            <form asp-action="DeleteItinerary"
-                                  asp-route-id="@item.Id"
-                                  method="post"
-                                  style="display:inline;"
-                                  onsubmit="return confirm('Delete this itinerary?');">
-                                <button type="submit" class="btn-delete-small">Delete</button>
-                            </form>
+                            <button class="btn-delete-small"
+                                    data-id="@item.Id"
+                                    data-title="@item.Title"
+                                    data-user="@item.User?.Email">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 }
@@ -70,3 +107,208 @@
         </table>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Delete Itinerary?</h3>
+        <p id="deleteMessage"></p>
+        <div class="modal-actions">
+            <form id="deleteForm" method="post" asp-action="DeleteItinerary">
+                <input type="hidden" id="deleteId" name="id" />
+                <button type="submit" class="btn-delete-confirm">Yes, Delete</button>
+                <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- User Itineraries Modal -->
+<div id="userModal" class="modal-overlay">
+    <div class="modal-content modal-large">
+        <div class="modal-header-flex">
+            <h3 id="userModalTitle">User's Itineraries</h3>
+            <button class="btn-close-modal" onclick="closeUserModal()">✕</button>
+        </div>
+        <div id="userItinerariesContent" class="user-itineraries-list">
+            <!-- Dynamic content loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<script>
+    // Search, Filter, Sort functionality
+    const searchInput = document.getElementById('itinerarySearch');
+    const statusFilter = document.getElementById('statusFilter');
+    const countryFilter = document.getElementById('countryFilter');
+    const clearBtn = document.getElementById('clearFilters');
+    const rows = Array.from(document.querySelectorAll('tbody tr'));
+    let currentSort = { column: null, direction: 'asc' };
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const countryValue = countryFilter.value;
+
+        rows.forEach(row => {
+            const title = row.cells[0].textContent.toLowerCase();
+            const user = row.cells[1].textContent.toLowerCase();
+            const country = row.cells[2].textContent;
+            const status = row.querySelector('.status-badge').classList.contains('active') ? 'active' : 'past';
+
+            const matchesSearch = title.includes(searchTerm) || user.includes(searchTerm) || country.toLowerCase().includes(searchTerm);
+            const matchesStatus = !statusValue || status === statusValue;
+            const matchesCountry = !countryValue || country === countryValue;
+
+            row.style.display = (matchesSearch && matchesStatus && matchesCountry) ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    statusFilter.addEventListener('change', filterTable);
+    countryFilter.addEventListener('change', filterTable);
+
+    clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        statusFilter.value = '';
+        countryFilter.value = '';
+        filterTable();
+    });
+
+    // Sorting
+    document.querySelectorAll('.sortable').forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.dataset.sort;
+            const direction = currentSort.column === column && currentSort.direction === 'asc' ? 'desc' : 'asc';
+            currentSort = { column, direction };
+
+            // Update sort icons
+            document.querySelectorAll('.sort-icon').forEach(icon => icon.textContent = '⇅');
+            header.querySelector('.sort-icon').textContent = direction === 'asc' ? '↑' : '↓';
+
+            // Sort rows
+            const tbody = document.querySelector('tbody');
+            const sortedRows = rows.sort((a, b) => {
+                let aVal, bVal;
+
+                switch(column) {
+                    case 'title':
+                        aVal = a.cells[0].textContent;
+                        bVal = b.cells[0].textContent;
+                        break;
+                    case 'user':
+                        aVal = a.cells[1].textContent;
+                        bVal = b.cells[1].textContent;
+                        break;
+                    case 'country':
+                        aVal = a.cells[2].textContent;
+                        bVal = b.cells[2].textContent;
+                        break;
+                    case 'start':
+                        aVal = a.dataset.startDate;
+                        bVal = b.dataset.startDate;
+                        break;
+                    case 'end':
+                        aVal = a.dataset.endDate;
+                        bVal = b.dataset.endDate;
+                        break;
+                }
+
+                return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            });
+
+            sortedRows.forEach(row => tbody.appendChild(row));
+        });
+    });
+
+    // Delete Modal
+    document.querySelectorAll('.btn-delete-small').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = btn.dataset.id;
+            const title = btn.dataset.title;
+            const user = btn.dataset.user;
+
+            document.getElementById('deleteId').value = id;
+            document.getElementById('deleteMessage').textContent =
+                `Are you sure you want to delete "${title}" by ${user}? This cannot be undone.`;
+            document.getElementById('deleteModal').classList.add('show');
+        });
+    });
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('show');
+    }
+
+    // User Itineraries Modal
+    document.querySelectorAll('.user-link').forEach(link => {
+        link.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const userId = link.dataset.userId;
+            const userEmail = link.dataset.userEmail;
+
+            document.getElementById('userModalTitle').textContent = `${userEmail}'s Itineraries`;
+            document.getElementById('userModal').classList.add('show');
+
+            // Filter itineraries for this user
+            const userItineraries = rows.filter(row => row.dataset.userId === userId);
+
+            const content = document.getElementById('userItinerariesContent');
+            if (userItineraries.length === 0) {
+                content.innerHTML = '<p class="empty-state">This user has no itineraries.</p>';
+            } else {
+                content.innerHTML = userItineraries.map(row => {
+                    const title = row.cells[0].textContent;
+                    const country = row.cells[2].textContent;
+                    const startDate = row.cells[3].textContent;
+                    const endDate = row.cells[4].textContent;
+                    const statusBadge = row.querySelector('.status-badge').outerHTML;
+                    const deleteBtn = row.querySelector('.btn-delete-small');
+
+                    return `
+                        <div class="user-itin-card">
+                            <div class="user-itin-info">
+                                <h4>${title}</h4>
+                                <p>${country} • ${startDate} → ${endDate}</p>
+                                ${statusBadge}
+                            </div>
+                            <div class="user-itin-actions">
+                                <a href="/Itinerary/Details/${deleteBtn.dataset.id}" class="btn-view-small">View</a>
+                                <button class="btn-delete-small"
+                                        data-id="${deleteBtn.dataset.id}"
+                                        data-title="${deleteBtn.dataset.title}"
+                                        data-user="${deleteBtn.dataset.user}"
+                                        onclick="closeUserModal(); document.querySelector('[data-id=\\'${deleteBtn.dataset.id}\\']').click();">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    });
+
+    function closeUserModal() {
+        document.getElementById('userModal').classList.remove('show');
+    }
+
+    // Toast notifications
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Show success toast if itinerary was deleted
+    @if (TempData["SuccessMessage"] != null)
+    {
+            <text>
+            showToast('@TempData["SuccessMessage"]', 'success');
+            </text>
+    }
+</script>
