@@ -36,7 +36,7 @@ public class ItineraryItemController : ControllerBase
     
     
     // Get Current User Id
-    private string GetCurrentUserId() => _userManager.GetUserId(User);
+    private string? GetCurrentUserId() => _userManager.GetUserId(User);
     
     // Itinerary Ownership Check
     private async Task<Itinerary?> GetOwnedItineraryAsync(int itineraryId)
@@ -52,41 +52,11 @@ public class ItineraryItemController : ControllerBase
 
         // Get user's own itineraries
         var userId = GetCurrentUserId();
+        if (userId == null) return null;
         if (itinerary.UserId == userId) return itinerary;
 
         return null;
     }
-    
-    
-    /*
-    // Read Items (GET)
-    // Returns all items in a specific itinerary
-    [HttpGet]
-    public async Task<IActionResult> GetItems(int itineraryId)
-    {
-        var itinerary = await GetOwnedItineraryAsync(itineraryId);
-        if (itinerary == null) return NotFound();
-
-        var items = await _context.ItineraryItems
-            .Include(i => i.Location)
-            .Where(i => i.ItineraryId == itineraryId)
-            .OrderBy(i => i.StopOrder)
-            .ToListAsync();
-
-        var itemsDto = items.Select(i => new ItineraryItemDto
-        {
-            Id = i.Id,
-            LocationId = i.LocationId,
-            LocationName = i.Location.Name,
-            StartDateTime = i.StartDateTime,
-            EndDateTime = i.EndDateTime,
-            StopOrder = i.StopOrder,
-            Note = i.Note
-        });
-
-        return Ok(itemsDto);
-    }
-    */
     
     
     // POST /itineraries/{itineraryId}/items

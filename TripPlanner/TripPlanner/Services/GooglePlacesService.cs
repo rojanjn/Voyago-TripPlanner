@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using TripPlanner.Google.PlaceSearch;
 using TripPlanner.Google.PlaceDetails;
-using TripPlanner.Google.PlaceSearch;
 
 namespace TripPlanner.Services;
 

@@ -8,5 +8,4 @@ namespace TripPlanner.Models;
 
 public class ApplicationUser: IdentityUser
 {
-    public ICollection<Itinerary> Itineraries { get; set; }
-}
+    public List<Itinerary> Itineraries { get; set; } = new();}

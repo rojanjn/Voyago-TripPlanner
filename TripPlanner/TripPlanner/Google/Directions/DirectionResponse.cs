@@ -25,7 +25,7 @@ public class Leg
 public class Duration
 {
     public string Text { get; set; } = "";
-    public int Value { get; set; }  // ← Google API will return seconds
+    public int Value { get; set; }  // Google API will return seconds
 }
 
 public class Distance
