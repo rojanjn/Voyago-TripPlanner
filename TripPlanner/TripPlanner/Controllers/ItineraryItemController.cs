@@ -36,7 +36,7 @@ public class ItineraryItemController : ControllerBase
     
     
     // Get Current User Id
-    private string GetCurrentUserId() => _userManager.GetUserId(User);
+    private string? GetCurrentUserId() => _userManager.GetUserId(User);
     
     // Itinerary Ownership Check
     private async Task<Itinerary?> GetOwnedItineraryAsync(int itineraryId)
@@ -52,6 +52,7 @@ public class ItineraryItemController : ControllerBase
 
         // Get user's own itineraries
         var userId = GetCurrentUserId();
+        if (userId == null) return null;
         if (itinerary.UserId == userId) return itinerary;
 
         return null;

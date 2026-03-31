@@ -13,7 +13,7 @@ public class Phrase
     // FK From Country
     [Required]
     public int CountryId { get; set; }
-    public Country Country { get; set; } 
+    public Country? Country { get; set; } 
     
     [Required]
     public string Content { get; set; } = null!;

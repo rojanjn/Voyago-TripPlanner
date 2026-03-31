@@ -1,5 +1,4 @@
-﻿// wwwroot/js/itinerary-index.js
-const CARDS_PER_PAGE = 4;
+﻿const CARDS_PER_PAGE = 4;
 const pages = { current: 0, past: 0 };
 
 function initPagination(tabId) {
