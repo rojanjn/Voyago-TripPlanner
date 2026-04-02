@@ -1168,6 +1168,10 @@ body.admin-page {
     font-size: 1rem;
     color: var(--text) !important;
     margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .card-country {
@@ -1693,6 +1697,8 @@ body.admin-page {
     font-size: 2rem;
     color: var(--text);
     margin: 0 0 0.5rem 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .trip-subtitle {

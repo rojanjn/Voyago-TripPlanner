@@ -16,7 +16,7 @@ public class Itinerary
     public int? CountryId { get; set; } 
 
     [Required]
-    [StringLength(100)]
+    [StringLength(60)]
     public string Title { get; set; } = string.Empty;
 
     public string? Description { get; set; }
