@@ -10,7 +10,7 @@
             <circle cx="12" cy="10" r="3"></circle>
         </svg>
     </div>
-    
+
     <div class="location-details">
         <div class="location-name">@Model.Location.Name</div>
 
@@ -21,12 +21,16 @@
 
         <!-- Edit mode -->
         <div class="edit-mode" style="display:none;">
+            <div class="edit-error text-danger" style="display:none; margin-bottom: 1rem;"></div>
+
             <label>Start</label>
             <input type="datetime-local" class="input-start"
                    value="@Model.StartDateTime.ToString("yyyy-MM-ddTHH:mm")"/>
+
             <label>End</label>
             <input type="datetime-local" class="input-end"
                    value="@Model.EndDateTime.ToString("yyyy-MM-ddTHH:mm")"/>
+
             <button class="btn-save-edit">Save</button>
             <button class="btn-cancel-edit">Cancel</button>
         </div>
@@ -42,5 +46,4 @@
             </button>
         </div>
     </div>
-    
-    </div>
+</div>

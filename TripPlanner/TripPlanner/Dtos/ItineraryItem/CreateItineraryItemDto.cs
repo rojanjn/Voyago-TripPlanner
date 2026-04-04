@@ -7,6 +7,5 @@ public class CreateItineraryItemDto
 {
     [Required]
     public CreateLocationDto Location { get; set; } = null!;
-    
     public string? Note { get; set; }
 }

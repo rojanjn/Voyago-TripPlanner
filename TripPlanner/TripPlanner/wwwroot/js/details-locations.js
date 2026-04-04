@@ -20,23 +20,42 @@
     document.querySelectorAll('.btn-save-edit').forEach(btn => {
         btn.addEventListener('click', async () => {
             const card = btn.closest('.location-item');
+            const errorDiv = card.querySelector('.edit-error');
             const itineraryItemId = parseInt(card.dataset.itemId);
             const stopOrder = parseInt(card.dataset.stopOrder);
             const startDateTime = card.querySelector('.input-start').value;
             const endDateTime = card.querySelector('.input-end').value;
 
+            // Clear old error
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            // Frontend validation
+            if (!startDateTime || !endDateTime) {
+                errorDiv.textContent = 'Both start and end date are required.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (new Date(endDateTime) <= new Date(startDateTime)) {
+                errorDiv.textContent = 'End date must be later than start date.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             const response = await fetch(`/itineraries/${itineraryId}/items/${itineraryItemId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    startDateTime,
-                    endDateTime,
-                    stopOrder,
-                    note: null
-                })
+                body: JSON.stringify({ startDateTime, endDateTime, stopOrder, note: null })
             });
 
-            if (response.ok) location.reload();
+            if (response.ok) {
+                location.reload();
+            } else {
+                const message = await response.text();
+                errorDiv.textContent = message || 'Something went wrong.';
+                errorDiv.style.display = 'block';
+            }
         });
     });
 

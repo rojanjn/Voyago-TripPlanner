@@ -114,17 +114,10 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/details-map.js"></script>
-    <script src="~/js/details-locations.js"></script>
-
     <script>
-        // Make navbar white immediately on Details page
-        document.querySelector('.navbar').classList.add('scrolled');
-        
         window.__itineraryId = @Model.Id;
         window.__locations = @Html.Raw(JsonSerializer.Serialize(
-                                 Model.ItineraryItems?.Select(i => new
-                                 {
+                                 Model.ItineraryItems?.Select(i => new {
                                      lat = i.Location.Latitude,
                                      lng = i.Location.Longitude,
                                      name = i.Location.Name
@@ -132,6 +125,8 @@
                              ));
     </script>
 
+    <script src="~/js/details-locations.js"></script>
+    <script src="~/js/details-map.js"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=@Configuration["GoogleMaps:ApiKey"]&libraries=places,geometry&v=weekly&callback=initMap&language=en"
         async defer>

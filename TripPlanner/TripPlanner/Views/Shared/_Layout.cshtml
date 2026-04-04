@@ -31,7 +31,18 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
                         </li>
-						}
+                    }
+                    else
+                    {
+                        <!-- This nav button is only shown to authorize users -->
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Itinerary" asp-action="Index">Plan Your Trip</a>
+                            </li>
+                        }
+                    
+                    }
                 </ul>
                 <partial name="_LoginPartial"/>
             </div>
