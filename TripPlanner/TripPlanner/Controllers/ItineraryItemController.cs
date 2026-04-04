@@ -64,6 +64,7 @@ public class ItineraryItemController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateItem(int itineraryId, CreateItineraryItemDto dto)
     {
+        
         var itinerary = await GetOwnedItineraryAsync(itineraryId);
         if (itinerary == null) return NotFound();
 
@@ -88,14 +89,16 @@ public class ItineraryItemController : ControllerBase
         var nextStopOrder = await _context.ItineraryItems
             .Where(i => i.ItineraryId == itineraryId)
             .MaxAsync(i => (int?)i.StopOrder) ?? 0;
+        
+        
 
         var item = new ItineraryItem
         {
             ItineraryId = itineraryId,
             LocationId = location.Id,
             StopOrder = nextStopOrder + 1,
-            StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc),
-            EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc),
+            StartDateTime = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc).ToUniversalTime(),
+            EndDateTime = DateTime.SpecifyKind(itinerary.StartDate.AddHours(1), DateTimeKind.Utc).ToUniversalTime(),
             Note = dto.Note
         };
 
@@ -133,8 +136,8 @@ public class ItineraryItemController : ControllerBase
 
         if (item == null) return NotFound();
 
-        item.StartDateTime = DateTime.SpecifyKind(dto.StartDateTime,  DateTimeKind.Utc);
-        item.EndDateTime = DateTime.SpecifyKind(dto.EndDateTime,  DateTimeKind.Utc);
+        item.StartDateTime = DateTime.SpecifyKind(dto.StartDateTime,  DateTimeKind.Utc).ToUniversalTime();
+        item.EndDateTime = DateTime.SpecifyKind(dto.EndDateTime,  DateTimeKind.Utc).ToUniversalTime();
         item.StopOrder = dto.StopOrder;
         item.Note = dto.Note;
 

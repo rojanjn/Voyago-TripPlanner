@@ -1,4 +1,6 @@
-﻿async function initMap() {
+﻿document.querySelector('.navbar')?.classList.add('scrolled');
+
+async function initMap() {
     const itineraryId = window.__itineraryId;
     const locations = window.__locations || [];
 

@@ -2,7 +2,7 @@
 
 namespace TripPlanner.Dtos.ItineraryItem;
 
-public class UpdateItineraryItemDto
+public class UpdateItineraryItemDto : IValidatableObject
 {
     public DateTime StartDateTime { get; set; }
     public DateTime EndDateTime { get; set; }

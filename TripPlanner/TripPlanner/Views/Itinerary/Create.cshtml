@@ -9,10 +9,7 @@
     <script>
         // Make navbar white immediately on Details page
         document.querySelector('.navbar').classList.add('scrolled');
-    </script>
-
-
-    <script>
+        
         // Date validation
         const startDate = document.querySelector('input[name="StartDate"]');
         const endDate = document.querySelector('input[name="EndDate"]');
@@ -54,7 +51,6 @@
 
                 <div class="form-field">
                     <input asp-for="Title" class="form-input" placeholder="Trip Title" maxlength="60" />
-                    <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="form-field">
@@ -76,10 +72,8 @@
                     <label class="form-label">Add Dates</label>
                     <div class="dates-row">
                         <input asp-for="StartDate" class="form-input" type="date"/>
-                        <span asp-validation-for="StartDate" class="text-danger"></span>
                         
                         <input asp-for="EndDate" class="form-input" type="date"/>
-                        <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
                 </div>
 
