@@ -90,22 +90,27 @@ namespace TripPlanner.Controllers
         // Automatically assigns UserId to the current logged-in user
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Itinerary itinerary)
+        public async Task<IActionResult> Create(SaveItineraryDto  dto)
         {
             // validate dates
-            if (itinerary.EndDate <= itinerary.StartDate)
+            if (dto.EndDate <= dto.StartDate)
             {
                 ModelState.AddModelError("EndDate", "End date must be after start date");
             }
 
             if (ModelState.IsValid)
             {
-                // Assign the current user as the owner before saving
-                itinerary.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                // Map DTO to model, UserId is assigned from the server, never from the form
+                var itinerary = new Itinerary
+                {
+                    Title = dto.Title,
+                    Description = dto.Description,
+                    StartDate = DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Utc),
+                    EndDate = DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Utc),
+                    CountryId = dto.CountryId,
+                    UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                };
                 
-                itinerary.StartDate = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc);
-                itinerary.EndDate = DateTime.SpecifyKind(itinerary.EndDate, DateTimeKind.Utc);
-
                 _context.Add(itinerary);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -113,7 +118,7 @@ namespace TripPlanner.Controllers
 
             // if validation failed, reload countries and return to form
             ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
-            return View(itinerary);
+            return View(dto);
         }
 
         // GET: Itinerary/Edit/{id}
@@ -134,64 +139,71 @@ namespace TripPlanner.Controllers
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                 if (itinerary.UserId != userId) return Forbid();
             }
-
+            
+            ViewBag.ItineraryId = itinerary.Id;
             ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
-            return View(itinerary);
+
+            // Send the data to view via DTO
+            var dto = new SaveItineraryDto
+            {
+                Title = itinerary.Title,
+                Description = itinerary.Description,
+                StartDate = itinerary.StartDate,
+                EndDate = itinerary.EndDate,
+                CountryId = itinerary.CountryId
+            };
+
+            return View(dto);
         }
 
         // POST: Itinerary/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Itinerary itinerary)
+        public async Task<IActionResult> Edit(int id, SaveItineraryDto dto)
         {
-            // The id in the URL must match the itinerary being submitted
-            if (id != itinerary.Id) return NotFound();
-
-            // Re-fetch from DB to verify ownership before allowing the edit
-            // We do this on POST as well to prevent someone crafting a direct POST request
+            // Re-fetch from DB to verify ownership before applying changes
             var existing = await _context.Itineraries.FindAsync(id);
-
             if (existing == null) return NotFound();
 
+            // Non-admins can only edit their own itineraries
             if (!User.IsInRole("Admin"))
             {
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-                // Block the edit if the itinerary doesn't belong to this user
                 if (existing.UserId != userId) return Forbid();
             }
+
+            // Server-side date validation
+            if (dto.EndDate <= dto.StartDate)
+                ModelState.AddModelError("EndDate", "End date must be after start date.");
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Only update the fields users are allowed to change
-                    // UserId is preserved from the existing record, not taken from the form
-                    existing.Title = itinerary.Title;
-                    existing.Description = itinerary.Description;
-                    existing.StartDate = itinerary.StartDate;
-                    existing.EndDate = itinerary.EndDate;
-                    existing.CountryId = itinerary.CountryId;
-
-                    existing.StartDate = DateTime.SpecifyKind(itinerary.StartDate, DateTimeKind.Utc);
-                    existing.EndDate = DateTime.SpecifyKind(itinerary.EndDate, DateTimeKind.Utc);
+                    // Only update allowed fields — UserId is preserved from the existing record
+                    existing.Title = dto.Title;
+                    existing.Description = dto.Description;
+                    existing.StartDate = DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Utc);
+                    existing.EndDate = DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Utc);
+                    existing.CountryId = dto.CountryId;
 
                     _context.Update(existing);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    // If the record no longer exists, return 404
+                    // If the record was deleted by another request, return 404
                     if (!_context.Itineraries.Any(e => e.Id == id))
                         return NotFound();
-
                     throw;
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(itinerary);
+            // Validation failed — reload countries dropdown and return to form with errors
+            ViewBag.Countries = _context.Countries.OrderBy(c => c.CountryName).ToList();
+            return View(dto);
         }
 
         // GET: Itinerary/Delete/{id}
