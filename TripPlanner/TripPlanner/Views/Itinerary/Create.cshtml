@@ -1,4 +1,4 @@
-@model TripPlanner.Models.Itinerary
+@model TripPlanner.Dtos.Itinerary.SaveItineraryDto
 
 @{
     Layout = "_Layout";
@@ -6,35 +6,7 @@
 
 <!-- This script makes sure start-date is not before end-date -->
 @section Scripts {
-    <script>
-        // Make navbar white immediately on Details page
-        document.querySelector('.navbar').classList.add('scrolled');
-        
-        // Date validation
-        const startDate = document.querySelector('input[name="StartDate"]');
-        const endDate = document.querySelector('input[name="EndDate"]');
-
-        if (startDate && endDate) {
-            endDate.addEventListener('change', function() {
-                if (startDate.value && endDate.value) {
-                    if (new Date(endDate.value) < new Date(startDate.value)) {
-                        alert('End date cannot be before start date');
-                        endDate.value = '';
-                    }
-                }
-            });
-
-            startDate.addEventListener('change', function() {
-                if (startDate.value && endDate.value) {
-                    if (new Date(endDate.value) < new Date(startDate.value)) {
-                        alert('End date cannot be before start date');
-                        endDate.value = '';
-                    }
-                }
-            });
-        }
-    </script>
-
+    <script src="~/js/itinerary-form.js"></script>
     <!-- Validation logic for required fields -->
 	<partial name="_ValidationScriptsPartial" />
 }

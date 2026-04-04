@@ -25,6 +25,8 @@
             const stopOrder = parseInt(card.dataset.stopOrder);
             const startDateTime = card.querySelector('.input-start').value;
             const endDateTime = card.querySelector('.input-end').value;
+            const startYear = new Date(startDateTime).getFullYear();
+            const endYear = new Date(endDateTime).getFullYear();
 
             // Clear old error
             errorDiv.style.display = 'none';
@@ -39,6 +41,18 @@
 
             if (new Date(endDateTime) <= new Date(startDateTime)) {
                 errorDiv.textContent = 'End date must be later than start date.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (startYear < 2000 || startYear > 3000) {
+                errorDiv.textContent = 'Start date must be between year 2000 and 3000.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (endYear < 2000 || endYear > 3000) {
+                errorDiv.textContent = 'End date must be between year 2000 and 3000.';
                 errorDiv.style.display = 'block';
                 return;
             }

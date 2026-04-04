@@ -16,5 +16,17 @@ public class UpdateItineraryItemDto : IValidatableObject
                 "End time must be after start time",
                 new[] { nameof(EndDateTime) }
             );
+        
+        if (StartDateTime.Year < 2000 || StartDateTime.Year > 3000)
+            yield return new ValidationResult(
+                "Start date must be between year 2000 and 3000",
+                new[] { nameof(StartDateTime) }
+            );
+
+        if (EndDateTime.Year < 2000 || EndDateTime.Year > 3000)
+            yield return new ValidationResult(
+                "End date must be between year 2000 and 3000",
+                new[] { nameof(EndDateTime) }
+            );
     }
 }
