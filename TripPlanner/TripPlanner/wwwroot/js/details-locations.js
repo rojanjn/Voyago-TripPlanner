@@ -51,6 +51,12 @@
                 return;
             }
 
+            if (endYear < 2000 || endYear > 3000) {
+                errorDiv.textContent = 'End date must be between year 2000 and 3000.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             const response = await fetch(`/itineraries/${itineraryId}/items/${itineraryItemId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
