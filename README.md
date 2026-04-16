@@ -4,6 +4,7 @@
 
 ### A Travel Planning Web Application
 *George Brown Polytechnic — Semester Capstone Project*
+Try it out for yourself: ![Live Demo](https://voyago-app.onrender.com/)
 
 ![ASP.NET](https://img.shields.io/badge/ASP.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
 ![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)
